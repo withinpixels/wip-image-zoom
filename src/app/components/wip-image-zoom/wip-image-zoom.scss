@@ -2,6 +2,7 @@
   display: block;
   width: 500px;
   max-width: 100%;
+  user-select: none;
   .main-image-wrapper {
     position: relative;
     z-index: 30;
@@ -31,24 +32,45 @@
     z-index: 10;
     width: 100%;
   }
-  .thumbs {
-    overflow-x: auto;
-    display: inline-block;
-    white-space: nowrap;
-    margin-left: -4px;
-    margin-right: -4px;
-    .thumb-wrapper {
-      display: inline-block;
-      padding: 8px 4px;
-      box-sizing: border-box;
-      width: 25%;
-      > img {
-        width: 100%;
-        cursor: pointer;
-        &.selected {
-          box-shadow: 0 2px 0 0 #9c0033;
+  wip-image-zoom-thumbs {
+    position: relative;
+    display: block;
+    .thumbs-wrapper {
+      width: 100%;
+      overflow: hidden;
+      .thumbs {
+        display: inline-block;
+        white-space: nowrap;
+        transition: transform 300ms ease;
+        .thumb-wrapper {
+          display: inline-block;
+          padding: 8px 8px 8px 0px;
+          box-sizing: border-box;
+          width: 30%;
+          > img {
+            display: block;
+            width: 100%;
+            cursor: pointer;
+            &.selected {
+              box-shadow: 0 2px 0 0 #9c0033;
+            }
+          }
         }
       }
+    }
+    .prev-button,
+    .next-button {
+      position: absolute;
+      top: 50%;
+      transform: translate(0, -50%);
+      cursor: pointer;
+      padding: 8px;
+    }
+    .next-button {
+      left: 100%;
+    }
+    .prev-button {
+      right: 100%;
     }
   }
 }
