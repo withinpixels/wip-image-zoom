@@ -1,0 +1,29 @@
+<div class="container">
+    <button ng-click="selected = {thumb:'/assets/images/2-thumb.jpg',medium:'/assets/images/2-medium.jpg',large:'/assets/images/2-large.jpg'}">
+        Second Image
+    </button>
+<pre>
+    {{selected | json}}
+</pre>
+    <img src="/assets/images/1-medium.jpg"
+         wip-image-zoom="{
+                         images:[
+                             {thumb:'/assets/images/1-thumb.jpg',medium:'/assets/images/1-medium.jpg',large:'/assets/images/1-large.jpg'},
+                             {thumb:'/assets/images/2-thumb.jpg',medium:'/assets/images/2-medium.jpg',large:'/assets/images/2-large.jpg'},
+                             {thumb:'/assets/images/3-thumb.jpg',medium:'/assets/images/3-medium.jpg',large:'/assets/images/3-large.jpg'},
+                             {thumb:'/assets/images/4-thumb.jpg',medium:'/assets/images/4-medium.jpg',large:'/assets/images/4-large.jpg'},
+                             {thumb:'/assets/images/5-thumb.jpg',medium:'/assets/images/5-medium.jpg',large:'/assets/images/5-large.jpg'}
+                         ]
+                         }"
+         selected-image="selected">
+    <!--<div class="image-wrapper">
+        <img class="main-image" src="http://lorempixel.com/400/400/cats/1">
+        <div class="image-thumbs">
+            <img src="http://lorempixel.com/400/400/cats/1">
+            <img src="http://lorempixel.com/400/400/cats/2">
+            <img src="http://lorempixel.com/400/400/cats/3">
+            <img src="http://lorempixel.com/400/400/cats/4">
+            <img src="http://lorempixel.com/400/400/cats/5">
+        </div>
+    </div>-->
+</div>
