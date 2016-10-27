@@ -1,12 +1,89 @@
 <div class="container">
-    <button ng-click="selected = {thumb:'/assets/images/2-thumb.jpg',medium:'/assets/images/2-medium.jpg',large:'/assets/images/2-large.jpg'}">
-        Second Image
-    </button>
-<pre>
-    {{selected | json}}
-</pre>
-    <img src="/assets/images/1-medium.jpg"
-         wip-image-zoom="{
+    <section>
+        <div class="demo-settings">
+            <button ng-repeat="image in vm.zoomOptions1.images"
+                    ng-click="vm.selected = image">
+                Image {{$index +1 }}
+            </button>
+            <div class="setting">
+                <label>Style:</label>
+                <select ng-model="vm.zoomOptions1.style">
+                    <option value="box">Box</option>
+                    <option value="inner">Inner</option>
+                </select>
+            </div>
+            <div class="setting">
+                <label>Method:</label>
+                <select ng-model="vm.zoomOptions1.method">
+                    <option value="lens">Lens</option>
+                    <option value="pointer">Pointer</option>
+                </select>
+            </div>
+            <div class="setting">
+                <label>Cursor:</label>
+                <select ng-model="vm.zoomOptions1.cursor">
+                    <option value="default">Default</option>
+                    <option value="pointer">Pointer</option>
+                    <option value="crosshair">Crosshair</option>
+                    <option value="move">Move</option>
+                    <option value="zoom-in">Zoom in</option>
+                    <option value="none">None</option>
+                </select>
+            </div>
+            <div class="setting">
+                <label>Show Lens:</label>
+                <input ng-model="vm.zoomOptions1.lens" type="checkbox"/>
+            </div>
+            <div class="setting">
+                <label>Zoom Level:</label>
+                <input ng-model="vm.zoomOptions1.zoomLevel" type="number" step=".5" min="0"/>
+            </div>
+            <div class="setting">
+                <label>Thumbs Position:</label>
+                <select ng-model="vm.zoomOptions1.thumbsPos">
+                    <option value="left">left</option>
+                    <option value="top">top</option>
+                    <option value="right">right</option>
+                    <option value="bottom">bottom</option>
+                </select>
+            </div>
+            <div class="setting">
+                <label>Previous Thumb Button:</label>
+                <input ng-model="vm.zoomOptions1.prevThumbButton" type="text"/>
+            </div>
+            <div class="setting">
+                <label>Next Thumb Button:</label>
+                <input ng-model="vm.zoomOptions1.nextThumbButton" type="text"/>
+            </div>
+            <div class="setting">
+                <label>Thumb Column Count:</label>
+                <input ng-model="vm.zoomOptions1.thumbCol" type="number" step="1" min="1"/>
+            </div>
+            <div class="setting">
+                <label>Thumb Column Padding (px):</label>
+                <input ng-model="vm.zoomOptions1.thumbColPadding" type="number" step="1" min="0"/>
+            </div>
+            <!--
+            <pre>
+              {{vm.zoomOptions1 | json}}
+              </pre>
+            <pre>
+              {{selected | json}}
+            </pre>
+            -->
+        </div>
+        <div class="demo-preview">
+            <img src="/assets/images/1-medium.jpg" wip-image-zoom="vm.zoomOptions1" selected-image="vm.selected">
+        </div>
+    </section>
+    <section>
+        <h1>Inline Object Settings</h1>
+        <div class="demo-settings">
+
+        </div>
+        <div class="demo-preview">
+            <img src="/assets/images/1-medium.jpg"
+                 wip-image-zoom="{
                          images:[
                              {thumb:'/assets/images/1-thumb.jpg',medium:'/assets/images/1-medium.jpg',large:'/assets/images/1-large.jpg'},
                              {thumb:'/assets/images/2-thumb.jpg',medium:'/assets/images/2-medium.jpg',large:'/assets/images/2-large.jpg'},
@@ -17,7 +94,11 @@
                              {thumb:'/assets/images/7-thumb.jpg',medium:'/assets/images/7-medium.jpg',large:'/assets/images/7-large.jpg'}
                          ]
                          }"
-         selected-image="selected">
+                 selected-image="selected">
+        </div>
+    </section>
+
+
     <!--<div class="image-wrapper">
         <img class="main-image" src="http://lorempixel.com/400/400/cats/1">
         <div class="image-thumbs">
