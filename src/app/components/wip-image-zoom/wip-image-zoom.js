@@ -105,7 +105,14 @@ function wipImageZoomDirective($timeout) {
                 $scope.$evalAsync(function () {
                     vm.thumbsPosX = 0;
 
-                    vm.thumbsEl.style.paddingTop = vm.options.thumbColPadding + 'px';
+                    if (vm.options.thumbsPos == 'top') {
+                        vm.thumbsEl.style.paddingBottom = vm.options.thumbColPadding + 'px';
+                        vm.thumbsEl.style.paddingTop = 0;
+                    } else {
+                        vm.thumbsEl.style.paddingTop = vm.options.thumbColPadding + 'px';
+                        vm.thumbsEl.style.paddingBottom = 0;
+                    }
+
                     for (var i = 0; i < vm.thumbsEl.children.length; i++) {
                         var thumb = vm.thumbsEl.children[i];
                         thumb.style.width = vm.thumbWidth + 'px';
