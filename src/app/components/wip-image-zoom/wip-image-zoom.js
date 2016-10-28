@@ -11,7 +11,7 @@ angular
 function wipImageZoomDirective($timeout) {
     return {
         restrict    : 'EA',
-        template    : '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\'active\':vm.zoomActive}">\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n    <div class="main-image-wrapper">\n        <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n        <div class="image-zoom-lens" wip-image-zoom-lens></div>\n        <img class="main-image" ng-src="{{vm.mainImage.medium}}">\n        <div class="zoom-mask" wip-image-zoom-mask>\n            <img wip-image-zoom-image class="zoom-image main-image-large"\n                 ng-src="{{vm.mainImage.large}}" image-on-load="vm.initZoom()">\n        </div>\n    </div>\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n    \n</div>',
+        template    : '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\'active\':vm.zoomActive}">\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n    <div class="main-image-wrapper">\n        <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n        <div class="image-zoom-lens" wip-image-zoom-lens></div>\n        <img class="main-image" ng-src="{{vm.mainImage.medium}}">\n        <div class="zoom-mask" ng-class="vm.options.style == \'box\'? vm.options.boxPos:\'\'"\n             wip-image-zoom-mask>\n            <img wip-image-zoom-image class="zoom-image main-image-large"\n                 ng-src="{{vm.mainImage.large}}" image-on-load="vm.initZoom()">\n        </div>\n    </div>\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n</div>',
         replace     : true,
         scope       : {
             selectedImage: '=',
@@ -24,11 +24,14 @@ function wipImageZoomDirective($timeout) {
         },
         controller  : function ($scope) {
             var vm = this,
-                evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskL, maskT, maskW, maskH, zoomImgW, zoomImgH, lensW, lensH, lensPosX, lensPosY, zoomLevelRatio,
+                evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskW, maskH, zoomImgW, zoomImgH, lensW, lensH, lensPosX, lensPosY, zoomLevelRatio,
                 defaultOpts = {
                     defaultImage   : 0, // Order of the default selected Image
                     images         : [],
                     style          : 'inner', // inner or box
+                    boxPos         : 'right-top', // e.g., right-top, right-middle, right-bottom, top-center, top-left, top-right ...
+                    boxW           : 400,
+                    boxH           : 400,
                     method         : 'lens', // fallow 'lens' or 'pointer'
                     cursor         : 'crosshair', // 'none', 'default', 'crosshair', 'pointer', 'move'
                     lens           : true,
@@ -142,10 +145,21 @@ function wipImageZoomDirective($timeout) {
                 trackerH = vm.zoomTracker.offsetHeight;
                 trackerL = vm.zoomTracker.offsetParent.offsetLeft;
                 trackerT = vm.zoomTracker.offsetParent.offsetTop;
-                maskL = vm.options.style === 'inner' ? trackerL : vm.zoomMaskEl.offsetParent.offsetLeft;
-                maskT = vm.options.style === 'inner' ? trackerT : vm.zoomMaskEl.offsetParent.offsetTop;
-                maskW = vm.options.style === 'inner' ? trackerW : vm.zoomMaskEl.offsetWidth;
-                maskH = vm.options.style === 'inner' ? trackerH : vm.zoomMaskEl.offsetHeight;
+
+                // Box Style
+                if (vm.options.style == 'box') {
+                    maskW = vm.options.boxW;
+                    maskH = vm.options.boxH;
+                    vm.zoomMaskEl.style.width = maskW + 'px';
+                    vm.zoomMaskEl.style.height = maskH + 'px';
+                }
+                // Inner Style
+                else {
+                    maskW = trackerW;
+                    maskH = trackerH;
+                    vm.zoomMaskEl.style.width = '100%';
+                    vm.zoomMaskEl.style.height = '100%';
+                }
 
                 if (vm.options.zoomLevel > 1) {
                     vm.zoomImageEl.style.width = trackerW * vm.options.zoomLevel + 'px';

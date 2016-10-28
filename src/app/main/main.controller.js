@@ -11,14 +11,17 @@
         vm.showToastr = showToastr;
         vm.zoomOptions1 = {
             defaultImage   : 0, // Order of the default selected Image
-            style          : 'inner', // inner or box
+            style          : 'box', // inner or box
+            boxPos         : 'right-middle',
+            boxW           : 400,
+            boxH           : 400,
             method         : 'lens', // fallow 'lens' or 'pointer'
             cursor         : 'crosshair', // 'none', 'default', 'crosshair', 'pointer', 'move'
             lens           : true,
             zoomLevel      : 3, // 0: not scales, uses the original large image size, use 1 and above to adjust.
             prevThumbButton: '&#9665;',
             nextThumbButton: '&#9655;',
-            thumbsPos       : 'top',
+            thumbsPos      : 'top',
             thumbCol       : 4,
             thumbColPadding: 4,
             images         : [
