@@ -11,7 +11,7 @@ angular
 function wipImageZoomDirective($timeout) {
     return {
         restrict    : 'EA',
-        template    : '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\'active\':vm.zoomActive}">\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n    <div class="main-image-wrapper">\n        <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n        <div class="image-zoom-lens" wip-image-zoom-lens></div>\n        <img class="main-image" ng-src="{{vm.mainImage.medium}}">\n        <div class="zoom-mask" ng-class="vm.options.style == \'box\'? vm.options.boxPos:\'\'"\n             wip-image-zoom-mask>\n            <img wip-image-zoom-image class="zoom-image main-image-large"\n                 ng-src="{{vm.mainImage.large}}" image-on-load="vm.initZoom()">\n        </div>\n    </div>\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n</div>',
+        template    : '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\n     \'active\':vm.zoomActive, \n     \'immersive-mode\':vm.immersiveModeActive,\n     \'immersive-mode-enabled\':vm.immersiveModeEnabled,\n     \'immersive-mode-disabled\':!vm.immersiveModeEnabled,\n     \'box-style\':vm.options.style == \'box\' ,\n     \'inner-style\':vm.options.style == \'inner\' || vm.immersiveModeEnabled}">\n\n    <div ng-if="vm.immersiveModeEnabled" class="disable-immersive-mode-button" ng-click="vm.disableImmersiveMode()">\n        &#10006;</div>\n\n    <div class="wip-image-zoom-content">\n\n        <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n        <div class="main-image-wrapper">\n            <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n            <div class="image-zoom-lens" wip-image-zoom-lens></div>\n            <img class="main-image" ng-src="{{vm.mainImage.medium}}">\n            <div class="zoom-mask"\n                 ng-class="vm.options.style == \'box\' && !vm.immersiveModeEnabled? vm.options.boxPos:\'\'"\n                 wip-image-zoom-mask>\n                <img wip-image-zoom-image class="zoom-image main-image-large"\n                     ng-src="{{vm.mainImage.large}}" image-on-load="vm.initZoom()">\n            </div>\n        </div>\n\n        <wip-image-zoom-thumbs\n                ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n    </div>\n</div>',
         replace     : true,
         scope       : {
             selectedImage: '=',
@@ -22,7 +22,7 @@ function wipImageZoomDirective($timeout) {
             ctrl.el = element;
             ctrl.init();
         },
-        controller  : function ($scope) {
+        controller  : function ($scope, $document, $window) {
             var vm = this,
                 evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskW, maskH, zoomImgW, zoomImgH, lensW, lensH, lensPosX, lensPosY, zoomLevelRatio,
                 defaultOpts = {
@@ -36,6 +36,7 @@ function wipImageZoomDirective($timeout) {
                     cursor         : 'crosshair', // 'none', 'default', 'crosshair', 'pointer', 'move'
                     lens           : true,
                     zoomLevel      : 3, // 0: not scales, uses the original large image size, use 1 and above to adjust.
+                    immersiveMode  : 769, // false or 0 for disable, max width(px) for trigger
                     prevThumbButton: '&#9665;',
                     nextThumbButton: '&#9655;',
                     thumbsPos      : 'bottom',
@@ -60,6 +61,8 @@ function wipImageZoomDirective($timeout) {
             vm.thumbsWrapperWidth;
             vm.thumbsWidth;
             vm.thumbsPosX;
+            vm.immersiveModeActive;
+            vm.immersiveModeEnabled;
 
             vm.init = init;
             vm.initZoom = initZoom;
@@ -68,6 +71,7 @@ function wipImageZoomDirective($timeout) {
             vm.updateMainImage = updateMainImage;
             vm.nextThumb = nextThumb;
             vm.prevThumb = prevThumb;
+            vm.disableImmersiveMode = disableImmersiveMode;
 
             function init() {
                 vm.options = !$scope.wipImageZoom ? defaultOpts : angular.extend(defaultOpts, $scope.wipImageZoom);
@@ -76,6 +80,15 @@ function wipImageZoomDirective($timeout) {
                 vm.mainImage = vm.images[vm.options.defaultImage];
 
                 $scope.selectedImage = vm.mainImage;
+            }
+
+            function update() {
+                $timeout(function () {
+                    initThumbs(function () {
+                        initZoom();
+                        updateThumbsPos();
+                    });
+                }, 0);
             }
 
             function initZoom() {
@@ -89,7 +102,24 @@ function wipImageZoomDirective($timeout) {
                     vm.zoomLens.style.display = 'none';
                 }
 
-                vm.zoomTracker.addEventListener('mouseenter', zoomStateEnable);
+                // Reset Event Listeners
+                removeEventListeners();
+
+                vm.immersiveModeActive = vm.options.immersiveMode && vm.options.immersiveMode > $window.innerWidth;
+
+                if (vm.immersiveModeActive) {
+                    vm.zoomTracker.addEventListener('mousedown', enableImmersiveMode);
+                    vm.zoomTracker.addEventListener('touchstart', enableImmersiveMode);
+                }
+
+                if (!vm.immersiveModeActive || vm.immersiveModeEnabled) {
+                    addEventListeners();
+                }
+
+            }
+
+            function addEventListeners() {
+                vm.zoomTracker.addEventListener('mousemove', zoomStateEnable);
                 vm.zoomTracker.addEventListener('touchstart', zoomStateEnable);
 
                 vm.zoomTracker.addEventListener('mouseleave', zoomStateDisable);
@@ -99,7 +129,40 @@ function wipImageZoomDirective($timeout) {
                 vm.zoomTracker.addEventListener('touchmove', setZoomImagePosition);
             }
 
-            function initThumbs() {
+            function removeEventListeners() {
+                vm.zoomTracker.removeEventListener('mousedown', enableImmersiveMode);
+                vm.zoomTracker.removeEventListener('touchstart', enableImmersiveMode);
+
+                vm.zoomTracker.removeEventListener('mousemove', zoomStateEnable);
+                vm.zoomTracker.removeEventListener('touchstart', zoomStateEnable);
+
+                vm.zoomTracker.removeEventListener('mouseleave', zoomStateDisable);
+                vm.zoomTracker.removeEventListener('touchend', zoomStateDisable);
+
+                vm.zoomTracker.removeEventListener('mousemove', setZoomImagePosition);
+                vm.zoomTracker.removeEventListener('touchmove', setZoomImagePosition);
+            }
+
+            function disableImmersiveMode() {
+                vm.immersiveModeEnabled = false;
+                $document.find('html').removeClass('wip-image-zoom-immersive-mode-enabled');
+                removeEventListeners();
+                update();
+            }
+
+            function enableImmersiveMode(ev) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                if (!vm.immersiveModeEnabled) {
+                    $scope.$apply(function () {
+                        vm.immersiveModeEnabled = true;
+                        $document.find('html').addClass('wip-image-zoom-immersive-mode-enabled');
+                        update();
+                    });
+                }
+            }
+
+            function initThumbs(callback) {
                 scrollThumbs(0);
                 vm.thumbsWrapperWidth = vm.thumbsWrapper.clientWidth;
                 vm.thumbWidth = (vm.thumbsWrapperWidth + vm.options.thumbColPadding) / vm.options.thumbCol;
@@ -121,6 +184,9 @@ function wipImageZoomDirective($timeout) {
                         thumb.style.width = vm.thumbWidth + 'px';
                         thumb.style.paddingRight = vm.options.thumbColPadding + 'px';
                     }
+                    if (callback) {
+                        return callback();
+                    }
                 });
             }
 
@@ -141,13 +207,14 @@ function wipImageZoomDirective($timeout) {
             }
 
             function initSizes(e) {
-                trackerW = vm.zoomTracker.offsetWidth;
-                trackerH = vm.zoomTracker.offsetHeight;
-                trackerL = vm.zoomTracker.offsetParent.offsetLeft;
-                trackerT = vm.zoomTracker.offsetParent.offsetTop;
+                var tracker = vm.zoomTracker.getBoundingClientRect();
+                trackerW = tracker.width;
+                trackerH = tracker.height;
+                trackerL = tracker.left + window.scrollX;
+                trackerT = tracker.top + window.scrollY;
 
                 // Box Style
-                if (vm.options.style == 'box') {
+                if (vm.options.style == 'box' && !vm.immersiveModeEnabled) {
                     maskW = vm.options.boxW;
                     maskH = vm.options.boxH;
                     vm.zoomMaskEl.style.width = maskW + 'px';
@@ -291,15 +358,13 @@ function wipImageZoomDirective($timeout) {
             }, true);
 
             angular.element(window).on('resize', function (e) {
-                initZoom();
-                initThumbs();
+                update();
             });
 
             $scope.$watch('wipImageZoom', function (newVal, oldVal) {
                 if (newVal !== undefined && newVal !== oldVal) {
                     init();
-                    initZoom();
-                    initThumbs();
+                    update();
                 }
             }, true);
         }

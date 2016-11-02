@@ -64,6 +64,11 @@
                 <input ng-model="vm.zoomOptions1.zoomLevel" type="number" step=".5" min="0"/>
             </div>
             <div class="setting">
+                <label>Immersive Mode:</label>
+                <input ng-model="vm.zoomOptions1.immersiveMode" type="number" step="1" min="0"/>
+                <div class="detail">false or 0 for disable, max width(px) for trigger</div>
+            </div>
+            <div class="setting">
                 <label>Thumbs Position:</label>
                 <select ng-model="vm.zoomOptions1.thumbsPos">
                     <option value="top">top</option>

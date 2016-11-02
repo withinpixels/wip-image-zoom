@@ -19,6 +19,7 @@
             cursor         : 'crosshair', // 'none', 'default', 'crosshair', 'pointer', 'move'
             lens           : true,
             zoomLevel      : 3, // 0: not scales, uses the original large image size, use 1 and above to adjust.
+            immersiveMode  : 769,
             prevThumbButton: '&#9665;',
             nextThumbButton: '&#9655;',
             thumbsPos      : 'top',
