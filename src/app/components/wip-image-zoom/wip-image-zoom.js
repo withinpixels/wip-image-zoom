@@ -109,7 +109,6 @@ function wipImageZoomDirective($timeout) {
 
                 if (vm.immersiveModeActive) {
                     vm.zoomTracker.addEventListener('mousedown', enableImmersiveMode);
-                    vm.zoomTracker.addEventListener('touchstart', enableImmersiveMode);
                 }
 
                 if (!vm.immersiveModeActive || vm.immersiveModeEnabled) {
@@ -131,7 +130,6 @@ function wipImageZoomDirective($timeout) {
 
             function removeEventListeners() {
                 vm.zoomTracker.removeEventListener('mousedown', enableImmersiveMode);
-                vm.zoomTracker.removeEventListener('touchstart', enableImmersiveMode);
 
                 vm.zoomTracker.removeEventListener('mousemove', zoomStateEnable);
                 vm.zoomTracker.removeEventListener('touchstart', zoomStateEnable);
