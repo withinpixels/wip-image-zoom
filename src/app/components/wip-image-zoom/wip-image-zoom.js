@@ -359,6 +359,17 @@ function wipImageZoomDirective($timeout) {
                 update();
             });
 
+            $scope.$watch(function () {
+                return {
+                    left: vm.zoomTracker.getBoundingClientRect().left,
+                    top : vm.zoomTracker.getBoundingClientRect().top
+                };
+            }, function (newVal, oldVal) {
+                if (newVal !== undefined && newVal !== oldVal) {
+                    update();
+                }
+            }, true);
+
             $scope.$watch('wipImageZoom', function (newVal, oldVal) {
                 if (newVal !== undefined && newVal !== oldVal) {
                     init();
