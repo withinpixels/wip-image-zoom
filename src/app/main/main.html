@@ -1,4 +1,10 @@
 <div class="container">
+    <h1 class="page-title">
+        wip-image-zoom
+    </h1>
+    <div class="demo-preview">
+        <img src="/assets/images/1-medium.jpg" wip-image-zoom="vm.zoomOptions1" selected-image="vm.selected">
+    </div>
     <section>
         <div class="demo-settings">
             <button ng-repeat="image in vm.zoomOptions1.images"
@@ -91,50 +97,12 @@
                 <label>Thumb Column Padding (px):</label>
                 <input ng-model="vm.zoomOptions1.thumbColPadding" type="number" step="1" min="0"/>
             </div>
-            <!--
-            <pre>
-              {{vm.zoomOptions1 | json}}
-              </pre>
-            <pre>
-              {{selected | json}}
-            </pre>
-            -->
         </div>
-        <div class="demo-preview">
-            <img src="/assets/images/1-medium.jpg" wip-image-zoom="vm.zoomOptions1" selected-image="vm.selected">
+        <div class="demo-json">
+            <h4>Options</h4>
+            <pre>{{vm.zoomOptions1 | json}}</pre>
+            <h4>Selected</h4>
+            <pre>{{vm.selected | json}}</pre>
         </div>
     </section>
-    <section>
-        <h1>Inline Object Settings</h1>
-        <div class="demo-settings">
-
-        </div>
-        <div class="demo-preview">
-            <img src="/assets/images/1-medium.jpg"
-                 wip-image-zoom="{
-                         images:[
-                             {thumb:'/assets/images/1-thumb.jpg',medium:'/assets/images/1-medium.jpg',large:'/assets/images/1-large.jpg'},
-                             {thumb:'/assets/images/2-thumb.jpg',medium:'/assets/images/2-medium.jpg',large:'/assets/images/2-large.jpg'},
-                             {thumb:'/assets/images/3-thumb.jpg',medium:'/assets/images/3-medium.jpg',large:'/assets/images/3-large.jpg'},
-                             {thumb:'/assets/images/4-thumb.jpg',medium:'/assets/images/4-medium.jpg',large:'/assets/images/4-large.jpg'},
-                             {thumb:'/assets/images/5-thumb.jpg',medium:'/assets/images/5-medium.jpg',large:'/assets/images/5-large.jpg'},
-                             {thumb:'/assets/images/6-thumb.jpg',medium:'/assets/images/6-medium.jpg',large:'/assets/images/6-large.jpg'},
-                             {thumb:'/assets/images/7-thumb.jpg',medium:'/assets/images/7-medium.jpg',large:'/assets/images/7-large.jpg'}
-                         ]
-                         }"
-                 selected-image="selected">
-        </div>
-    </section>
-
-
-    <!--<div class="image-wrapper">
-        <img class="main-image" src="http://lorempixel.com/400/400/cats/1">
-        <div class="image-thumbs">
-            <img src="http://lorempixel.com/400/400/cats/1">
-            <img src="http://lorempixel.com/400/400/cats/2">
-            <img src="http://lorempixel.com/400/400/cats/3">
-            <img src="http://lorempixel.com/400/400/cats/4">
-            <img src="http://lorempixel.com/400/400/cats/5">
-        </div>
-    </div>-->
 </div>

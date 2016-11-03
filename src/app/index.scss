@@ -27,6 +27,18 @@ body {
   margin-left: auto;
   padding: 32px;
   max-width: 960px;
+  .page-title{
+  margin: 16px auto 48px auto;
+    text-align: center;
+    font-weight: 400;
+    background: #f7f7f7;
+    padding: 16px;
+    color: #616161;
+  }
+  > .demo-preview{
+    max-width: 480px;
+    margin: 24px auto;
+  }
   > section{
     padding: 16px 0;
     display: block;
