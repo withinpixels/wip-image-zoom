@@ -63,8 +63,8 @@ gulp.task('html', ['inject', 'partials'], function () {
       collapseWhitespace: true
     }))
     .pipe(htmlFilter.restore)
-    .pipe(gulp.dest(path.join(conf.paths.dist, '/')))
-    .pipe($.size({ title: path.join(conf.paths.dist, '/'), showFiles: true }));
+    .pipe(gulp.dest(path.join(conf.paths.demoDist, '/')))
+    .pipe($.size({ title: path.join(conf.paths.demoDist, '/'), showFiles: true }));
   });
 
 // Only applies for fonts from bower dependencies
@@ -73,7 +73,7 @@ gulp.task('fonts', function () {
   return gulp.src($.mainBowerFiles())
     .pipe($.filter('**/*.{eot,otf,svg,ttf,woff,woff2}'))
     .pipe($.flatten())
-    .pipe(gulp.dest(path.join(conf.paths.dist, '/fonts/')));
+    .pipe(gulp.dest(path.join(conf.paths.demoDist, '/fonts/')));
 });
 
 gulp.task('other', function () {
@@ -86,16 +86,41 @@ gulp.task('other', function () {
     path.join('!' + conf.paths.src, '/**/*.{html,css,js,scss}')
   ])
     .pipe(fileFilter)
-    .pipe(gulp.dest(path.join(conf.paths.dist, '/')));
+    .pipe(gulp.dest(path.join(conf.paths.demoDist, '/')));
 });
 
 gulp.task('clean', function () {
-  return $.del([path.join(conf.paths.dist, '/'), path.join(conf.paths.tmp, '/'), path.join(conf.paths.docs, '/')]);
+  return $.del([path.join(conf.paths.demoDist, '/'), path.join(conf.paths.tmp, '/'), path.join(conf.paths.docs, '/'), path.join(conf.paths.dist, '/')]);
 });
 
-gulp.task('build', ['html', 'fonts', 'other']);
+gulp.task('build', ['html', 'fonts', 'other'],function(){
+   return gulp.start('build-dist');
+});
+
+gulp.task('build-dist', function(){
+    var sassOptions = {
+        outputStyle: 'expanded',
+        precision: 10
+    };
+
+    gulp.src(path.join(conf.paths.src, '/app/components/wip-image-zoom/wip-image-zoom.js'))
+        .pipe($.ngAnnotate())
+        .pipe(gulp.dest(path.join(conf.paths.dist, '/')))
+        .pipe($.uglify({ preserveComments: $.uglifySaveLicense })).on('error', conf.errorHandler('Uglify'))
+        .pipe($.rename({ suffix: '.min' }))
+        .pipe(gulp.dest(path.join(conf.paths.dist, '/')));
+
+    gulp.src(path.join(conf.paths.src, '/app/components/wip-image-zoom/wip-image-zoom.scss'))
+        .pipe($.sass(sassOptions)).on('error', conf.errorHandler('Sass'))
+        .pipe($.autoprefixer()).on('error', conf.errorHandler('Autoprefixer'))
+        .pipe(gulp.dest(path.join(conf.paths.dist, '/')))
+        .pipe($.cssnano())
+        .pipe($.rename({ suffix: '.min' }))
+        .pipe(gulp.dest(path.join(conf.paths.dist, '/')));
+
+})
 
 gulp.task('docs', ['build'], function(){
-    return gulp.src(path.join(conf.paths.dist, '/**/*'))
+    return gulp.src(path.join(conf.paths.demoDist, '/**/*'))
         .pipe(gulp.dest(path.join(conf.paths.docs, '/')))
 });
