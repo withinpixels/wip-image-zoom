@@ -14,8 +14,8 @@
     "angular-mocks": "~1.5.3"
   },
   "main": [
-    "dist/wip-image-zoom.min.js",
-    "dist/wip-image-zoom.min.css"
+    "dist/wip-image-zoom.js",
+    "dist/wip-image-zoom.css"
   ],
   "resolutions": {
     "angular": "~1.5.3"
