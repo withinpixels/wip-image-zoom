@@ -1,6 +1,6 @@
 {
-  "name": "wipImageZoom",
-  "version": "0.0.0",
+  "name": "wip-image-zoom",
+  "version": "0.1.0-beta",
   "dependencies": {
     "angular-ui-router": "~0.2.15",
     "malarkey": "yuanqing/malarkey#~1.3.1",
@@ -13,6 +13,10 @@
   "devDependencies": {
     "angular-mocks": "~1.5.3"
   },
+  "main": [
+    "dist/wip-image-zoom.min.js",
+    "dist/wip-image-zoom.min.css"
+  ],
   "resolutions": {
     "angular": "~1.5.3"
   }

@@ -1,6 +1,6 @@
 {
-  "name": "wipImageZoom",
-  "version": "0.0.0",
+  "name": "wip-image-zoom",
+  "version": "0.1.0-beta",
   "dependencies": {},
   "scripts": {
     "test": "gulp test"
