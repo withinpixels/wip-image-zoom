@@ -10,19 +10,19 @@
         var vm = this;
         vm.showToastr = showToastr;
         vm.zoomOptions1 = {
-            defaultImage   : 0, // Order of the default selected Image
-            style          : 'box', // inner or box
-            boxPos         : 'right-middle',
+            defaultImage   : 0,
+            style          : 'box',
+            boxPos         : 'right-top',
             boxW           : 400,
             boxH           : 400,
-            method         : 'lens', // fallow 'lens' or 'pointer'
-            cursor         : 'crosshair', // 'none', 'default', 'crosshair', 'pointer', 'move'
+            method         : 'lens',
+            cursor         : 'crosshair',
             lens           : true,
-            zoomLevel      : 3, // 0: not scales, uses the original large image size, use 1 and above to adjust.
+            zoomLevel      : 3,
             immersiveMode  : 769,
             prevThumbButton: '&#9665;',
             nextThumbButton: '&#9655;',
-            thumbsPos      : 'top',
+            thumbsPos      : 'bottom',
             thumbCol       : 4,
             thumbColPadding: 4,
             images         : [
