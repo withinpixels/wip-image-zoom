@@ -5,4 +5,4 @@ It is in Beta phase,
 comments and suggestions are welcome.
 
 ## Demo
-[withinpixels.github.io/wip-image-zoom](withinpixels.github.io/wip-image-zoom)
+[withinpixels.github.io/wip-image-zoom](https://withinpixels.github.io/wip-image-zoom)
