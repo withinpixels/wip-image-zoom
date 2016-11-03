@@ -90,7 +90,12 @@ gulp.task('other', function () {
 });
 
 gulp.task('clean', function () {
-  return $.del([path.join(conf.paths.dist, '/'), path.join(conf.paths.tmp, '/')]);
+  return $.del([path.join(conf.paths.dist, '/'), path.join(conf.paths.tmp, '/'), path.join(conf.paths.docs, '/')]);
 });
 
 gulp.task('build', ['html', 'fonts', 'other']);
+
+gulp.task('docs', ['build'], function(){
+    return gulp.src(path.join(conf.paths.dist, '/**/*'))
+        .pipe(gulp.dest(path.join(conf.paths.docs, '/')))
+});
