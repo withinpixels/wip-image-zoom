@@ -76,6 +76,9 @@ body {
 
 @media  screen and (max-width: 768px){
   .container {
+   > .demo-preview {
+    max-width: 330px;
+   }
     > section{
       > div {
         width: 100%;

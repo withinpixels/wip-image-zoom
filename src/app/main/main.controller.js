@@ -6,9 +6,8 @@
         .controller('MainController', MainController);
 
     /** @ngInject */
-    function MainController($timeout, toastr) {
+    function MainController() {
         var vm = this;
-        vm.showToastr = showToastr;
         vm.zoomOptions1 = {
             defaultImage   : 0,
             style          : 'box',
@@ -63,11 +62,5 @@
                 }
             ]
         };
-
-        function showToastr() {
-            toastr.info('Fork <a href="https://github.com/Swiip/generator-gulp-angular" target="_blank"><b>generator-gulp-angular</b></a>');
-            vm.classAnimation = '';
-        }
-
     }
 })();

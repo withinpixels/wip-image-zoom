@@ -204,12 +204,12 @@ function wipImageZoomDirective($timeout) {
                 vm.thumbsEl.style.transform = 'translate3d(' + posX + 'px,' + posY + 'px, 0)';
             }
 
-            function initSizes(e) {
+            function initSizes() {
                 var tracker = vm.zoomTracker.getBoundingClientRect();
                 trackerW = tracker.width;
                 trackerH = tracker.height;
-                trackerL = tracker.left + window.scrollX;
-                trackerT = tracker.top + window.scrollY;
+                trackerL = tracker.left + $window.scrollX;
+                trackerT = tracker.top + $window.scrollY;
 
                 // Box Style
                 if (vm.options.style == 'box' && !vm.immersiveModeEnabled) {
@@ -325,12 +325,6 @@ function wipImageZoomDirective($timeout) {
                 }
             }
 
-            function toogleZoomState(state) {
-                $scope.$evalAsync(function () {
-                    vm.zoomActive = state || !vm.zoomActive;
-                })
-            }
-
             function zoomStateEnable() {
                 $scope.$evalAsync(function () {
                     vm.zoomActive = true;
@@ -349,13 +343,13 @@ function wipImageZoomDirective($timeout) {
             }
 
             $scope.$watch('selectedImage', function (newVal, oldVal) {
-                if (newVal !== undefined && newVal !== oldVal) {
+                if (angular.isDefined(newVal) && newVal !== oldVal) {
                     vm.mainImage = newVal;
                     updateThumbsPos();
                 }
             }, true);
 
-            angular.element(window).on('resize', function (e) {
+            angular.element(window).on('resize', function () {
                 update();
             });
 
@@ -365,20 +359,20 @@ function wipImageZoomDirective($timeout) {
                     top : vm.zoomTracker.getBoundingClientRect().top
                 };
             }, function (newVal, oldVal) {
-                if (newVal !== undefined && newVal !== oldVal) {
+                if (angular.isDefined(newVal) && newVal !== oldVal) {
                     update();
                 }
             }, true);
 
             $scope.$watch('wipImageZoom', function (newVal, oldVal) {
-                if (newVal !== undefined && newVal !== oldVal) {
+                if (angular.isDefined(newVal) && newVal !== oldVal) {
                     init();
                     update();
                 }
             }, true);
         }
     }
-};
+}
 
 function wipImageZoomLensDirective() {
     return {
@@ -433,7 +427,7 @@ function wipImageZoomThumbsDirective() {
     }
 }
 
-function imageOnLoadDirective() {
+function imageOnLoadDirective($log) {
     return {
         restrict: 'A',
         link    : function (scope, element, attrs) {
@@ -441,7 +435,7 @@ function imageOnLoadDirective() {
                 scope.$apply(attrs.imageOnLoad);
             }, false);
             element[0].addEventListener('error', function () {
-                console.warn('image could not be loaded');
+                $log.warn('image could not be loaded');
             });
         }
     };
