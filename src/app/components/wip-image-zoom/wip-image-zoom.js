@@ -14,7 +14,8 @@ function wipImageZoomDirective($timeout) {
         template    : '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\n     \'active\':vm.zoomActive, \n     \'immersive-mode\':vm.immersiveModeActive,\n     \'immersive-mode-enabled\':vm.immersiveModeEnabled,\n     \'immersive-mode-disabled\':!vm.immersiveModeEnabled,\n     \'box-style\':vm.options.style == \'box\' ,\n     \'inner-style\':vm.options.style == \'inner\' || vm.immersiveModeEnabled}">\n\n    <div ng-if="vm.immersiveModeEnabled" class="disable-immersive-mode-button" ng-click="vm.disableImmersiveMode()">\n        &#10006;</div>\n\n    <div class="wip-image-zoom-content">\n\n        <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n        <div class="main-image-wrapper">\n            <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n            <div class="image-zoom-lens" wip-image-zoom-lens></div>\n            <img class="main-image" ng-src="{{vm.mainImage.medium}}">\n            <div class="zoom-mask"\n                 ng-class="vm.options.style == \'box\' && !vm.immersiveModeEnabled? vm.options.boxPos:\'\'"\n                 wip-image-zoom-mask>\n                <img wip-image-zoom-image class="zoom-image main-image-large"\n                     ng-src="{{vm.mainImage.large}}" image-on-load="vm.initZoom()">\n            </div>\n        </div>\n\n        <wip-image-zoom-thumbs\n                ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n    </div>\n</div>',
         replace     : true,
         scope       : {
-            selectedImage: '=',
+            selectedModel: '=?',
+            selectedIndex: '=?',
             wipImageZoom : '='
         },
         controllerAs: 'vm',
@@ -26,7 +27,7 @@ function wipImageZoomDirective($timeout) {
             var vm = this,
                 evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskW, maskH, zoomImgW, zoomImgH, lensW, lensH, lensPosX, lensPosY, zoomLevelRatio,
                 defaultOpts = {
-                    defaultImage   : 0, // Order of the default selected Image
+                    defaultIndex   : 0, // Order of the default selected Image
                     images         : [],
                     style          : 'inner', // inner or box
                     boxPos         : 'right-top', // e.g., right-top, right-middle, right-bottom, top-center, top-left, top-right ...
@@ -78,9 +79,10 @@ function wipImageZoomDirective($timeout) {
                 vm.options = !$scope.wipImageZoom ? defaultOpts : angular.extend(defaultOpts, $scope.wipImageZoom);
                 vm.images = vm.options.images;
 
-                vm.mainImage = vm.images[vm.options.defaultImage];
+                vm.mainImage = vm.images[vm.options.defaultIndex];
 
-                $scope.selectedImage = vm.mainImage;
+                $scope.selectedIndex = vm.options.defaultIndex;
+                $scope.selectedModel = vm.mainImage;
             }
 
             function update() {
@@ -345,12 +347,20 @@ function wipImageZoomDirective($timeout) {
 
             function updateMainImage(image) {
                 vm.mainImage = image;
-                $scope.selectedImage = vm.mainImage;
+                $scope.selectedModel = vm.mainImage;
+                $scope.selectedIndex = vm.images.indexOf(vm.mainImage);
             }
 
-            $scope.$watch('selectedImage', function (newVal, oldVal) {
+            $scope.$watch('selectedModel', function (newVal, oldVal) {
                 if (angular.isDefined(newVal) && newVal !== oldVal) {
                     vm.mainImage = newVal;
+                    updateThumbsPos();
+                }
+            }, true);
+
+            $scope.$watch('selectedIndex', function (newVal, oldVal) {
+                if (angular.isDefined(newVal) && newVal !== oldVal) {
+                    vm.mainImage = vm.images[newVal];
                     updateThumbsPos();
                 }
             }, true);

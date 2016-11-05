@@ -3,7 +3,7 @@
         wip-image-zoom
     </h1>
     <div class="demo-preview">
-        <img src="assets/images/1-medium.jpg" wip-image-zoom="vm.zoomOptions1" selected-image="vm.selected">
+        <img src="assets/images/1-medium.jpg" wip-image-zoom="vm.zoomOptions1" selected-model="vm.selected" selected-index="vm.selectedIndex">
     </div>
     <section>
         <div class="demo-settings">
@@ -101,8 +101,10 @@
         <div class="demo-json">
             <h4>Options</h4>
             <pre>{{vm.zoomOptions1 | json}}</pre>
-            <h4>Selected</h4>
+            <h4>Selected Model</h4>
             <pre>{{vm.selected | json}}</pre>
+            <h4>SelectedIndex</h4>
+            <pre>{{vm.selectedIndex}}</pre>
         </div>
     </section>
 </div>
