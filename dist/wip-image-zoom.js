@@ -44,7 +44,8 @@ function wipImageZoomDirective($timeout) {
                     thumbsPos      : 'bottom',
                     thumbCol       : 3,
                     thumbColPadding: 4
-                };
+                },
+                updateTimeout = true;
 
             vm.el;
             vm.zoomTracker;
@@ -85,12 +86,17 @@ function wipImageZoomDirective($timeout) {
             }
 
             function update() {
-                $timeout(function () {
+                // Debounce for update
+                if (updateTimeout) {
+                    $timeout.cancel(updateTimeout);
+                }
+
+                updateTimeout = $timeout(function () {
                     initThumbs(function () {
                         initZoom();
                         updateThumbsPos();
                     });
-                }, 0);
+                }, 400);
             }
 
             function initZoom() {
@@ -165,7 +171,7 @@ function wipImageZoomDirective($timeout) {
             function initThumbs(callback) {
                 scrollThumbs(0);
                 vm.thumbsWrapperWidth = vm.thumbsWrapper.clientWidth;
-                vm.thumbWidth = (vm.thumbsWrapperWidth + vm.options.thumbColPadding) / vm.options.thumbCol;
+                vm.thumbWidth = Math.round((vm.thumbsWrapperWidth + vm.options.thumbColPadding) / vm.options.thumbCol);
                 vm.thumbsWidth = vm.thumbWidth * vm.images.length;
                 // Set Thumbnail width
                 $scope.$evalAsync(function () {
