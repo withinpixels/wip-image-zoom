@@ -32,23 +32,23 @@ function wipImageZoomDirective($timeout) {
             var vm = this,
                 evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskW, maskH, zoomImgW, zoomImgH, lensW, lensH, lensPosX, lensPosY, zoomLevelRatio,
                 defaultOpts = {
-                    defaultIndex   : 0, // Order of the default selected Image
-                    images         : [],
-                    style          : 'inner', // inner or box
-                    boxPos         : 'right-top', // e.g., right-top, right-middle, right-bottom, top-center, top-left, top-right ...
-                    boxW           : 400,
-                    boxH           : 400,
-                    method         : 'lens', // fallow 'lens' or 'pointer'
-                    cursor         : 'crosshair', // 'none', 'default', 'crosshair', 'pointer', 'move'
-                    lens           : true,
-                    zoomLevel      : 3, // 0: not scales, uses the original large image size, use 1 and above to adjust.
-                    immersiveMode  : 769, // false or 0 for disable, max width(px) for trigger
-                    immersiveModeMessage  : 'Click to Zoom',
-                    prevThumbButton: '&#9665;',
-                    nextThumbButton: '&#9655;',
-                    thumbsPos      : 'bottom',
-                    thumbCol       : 3,
-                    thumbColPadding: 4
+                    defaultIndex        : 0, // Order of the default selected Image
+                    images              : [],
+                    style               : 'inner', // inner or box
+                    boxPos              : 'right-top', // e.g., right-top, right-middle, right-bottom, top-center, top-left, top-right ...
+                    boxW                : 400,
+                    boxH                : 400,
+                    method              : 'lens', // fallow 'lens' or 'pointer'
+                    cursor              : 'crosshair', // 'none', 'default', 'crosshair', 'pointer', 'move'
+                    lens                : true,
+                    zoomLevel           : 3, // 0: not scales, uses the original large image size, use 1 and above to adjust.
+                    immersiveMode       : 769, // false or 0 for disable, max width(px) for trigger
+                    immersiveModeMessage: 'Click to Zoom',
+                    prevThumbButton     : '&#9665;',
+                    nextThumbButton     : '&#9655;',
+                    thumbsPos           : 'bottom',
+                    thumbCol            : 3,
+                    thumbColPadding     : 4
                 },
                 updateTimeout = true;
 
@@ -379,10 +379,11 @@ function wipImageZoomDirective($timeout) {
 
             $scope.$watch(function () {
                 return {
-                    left: vm.zoomTracker.getBoundingClientRect().left,
-                    top : vm.zoomTracker.getBoundingClientRect().top
+                    left: vm.zoomTracker.getBoundingClientRect().left + $window.scrollX,
+                    top : vm.zoomTracker.getBoundingClientRect().top + $window.scrollY
                 };
             }, function (newVal, oldVal) {
+                zoomStateDisable();
                 if (angular.isDefined(newVal) && newVal !== oldVal) {
                     update();
                 }
