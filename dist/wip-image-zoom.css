@@ -2,6 +2,40 @@ html.wip-image-zoom-immersive-mode-enabled {
   overflow: hidden;
 }
 
+html body .immersive-wip-image-zoom {
+  z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+}
+
+html body .immersive-wip-image-zoom > .disable-immersive-mode-button {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 8px;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 20;
+}
+
+html body .immersive-wip-image-zoom > .wip-image-zoom {
+  z-index: 20;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  left: 0;
+  right: 0;
+  width: 75vh;
+  max-width: 75vw;
+  margin: auto;
+}
+
 .wip-image-zoom {
   display: block;
   max-width: 100%;
@@ -11,48 +45,12 @@ html.wip-image-zoom-immersive-mode-enabled {
           user-select: none;
 }
 
-.wip-image-zoom.immersive-mode.immersive-mode-disabled .image-zoom-tracker {
-  cursor: zoom-in !important;
-}
-
-.wip-image-zoom.immersive-mode.immersive-mode-enabled {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 999;
-  background: white;
-}
-
-.wip-image-zoom.immersive-mode.immersive-mode-enabled .wip-image-zoom-content {
-  position: absolute;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-  left: 0;
-  right: 0;
-  width: 80vh;
-  max-width: 80vw;
-  margin: auto;
-}
-
-.wip-image-zoom.immersive-mode.immersive-mode-enabled .disable-immersive-mode-button {
-  position: fixed;
-  top: 0;
-  right: 0;
-  padding: 8px;
-  font-size: 24px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.wip-image-zoom .wip-image-zoom-content .main-image-wrapper {
+.wip-image-zoom .main-image-wrapper {
   position: relative;
   overflow: hidden;
 }
 
-.wip-image-zoom .wip-image-zoom-content .main-image-wrapper .image-zoom-lens {
+.wip-image-zoom .main-image-wrapper .image-zoom-lens {
   display: none;
   position: absolute;
   z-index: 25;
@@ -68,7 +66,7 @@ html.wip-image-zoom-immersive-mode-enabled {
   transition: opacity .3s ease, visibility .3s ease;
 }
 
-.wip-image-zoom .wip-image-zoom-content .main-image-wrapper .image-zoom-tracker {
+.wip-image-zoom .main-image-wrapper .image-zoom-tracker {
   position: absolute;
   top: 0;
   left: 0;
@@ -79,7 +77,7 @@ html.wip-image-zoom-immersive-mode-enabled {
   height: 100%;
 }
 
-.wip-image-zoom .wip-image-zoom-content .main-image-wrapper .zoom-mask {
+.wip-image-zoom .main-image-wrapper .zoom-mask {
   z-index: 20;
   position: absolute;
   overflow: hidden;
@@ -89,7 +87,23 @@ html.wip-image-zoom-immersive-mode-enabled {
   transition: opacity .3s ease, visibility .3s ease;
 }
 
-.wip-image-zoom .wip-image-zoom-content .main-image {
+.wip-image-zoom .main-image-wrapper .immersive-mode-message {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 6px 8px;
+  margin-bottom: 12px;
+  z-index: 20;
+  text-align: center;
+}
+
+.wip-image-zoom .main-image {
   position: relative;
   display: block;
   z-index: 10;
@@ -274,4 +288,17 @@ html.wip-image-zoom-immersive-mode-enabled {
 .wip-image-zoom.active .main-image-wrapper .zoom-mask, .wip-image-zoom.active .main-image-wrapper .image-zoom-lens {
   opacity: 1;
   visibility: visible;
+}
+
+.wip-image-zoom.immersive-mode .main-image-wrapper {
+  overflow: hidden;
+}
+
+.wip-image-zoom.immersive-mode .main-image-wrapper .zoom-mask, .wip-image-zoom.immersive-mode .main-image-wrapper .image-zoom-lens {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.wip-image-zoom.immersive-mode .main-image-wrapper .image-zoom-tracker {
+  cursor: zoom-in !important;
 }

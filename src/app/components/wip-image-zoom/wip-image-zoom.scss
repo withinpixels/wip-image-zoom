@@ -2,38 +2,18 @@ html {
   &.wip-image-zoom-immersive-mode-enabled {
     overflow: hidden;
   }
-}
 
-.wip-image-zoom {
-  display: block;
-  max-width: 100%;
-  user-select: none;
-  &.immersive-mode {
-    &.immersive-mode-disabled {
-      .image-zoom-tracker {
-        cursor: zoom-in !important;
-      }
-    }
-    &.immersive-mode-enabled {
+  body {
+    .immersive-wip-image-zoom {
+      z-index: 9999;
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      z-index: 999;
       background: white;
-      .wip-image-zoom-content {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        left: 0;
-        right: 0;
-        //padding: 32px;
-        width: 80vh;
-        max-width: 80vw;
-        margin: auto;
-      }
-      .disable-immersive-mode-button {
+
+      > .disable-immersive-mode-button {
         position: fixed;
         top: 0;
         right: 0;
@@ -41,53 +21,83 @@ html {
         font-size: 24px;
         line-height: 1;
         cursor: pointer;
+        z-index: 20;
+      }
+      > .wip-image-zoom {
+        z-index: 20;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 0;
+        right: 0;
+        width: 75vh;
+        max-width: 75vw;
+        margin: auto;
       }
     }
   }
+}
 
-  .wip-image-zoom-content {
-    .main-image-wrapper {
-      position: relative;
-      overflow: hidden;
-      .image-zoom-lens {
-        display: none;
-        position: absolute;
-        z-index: 25;
-        height: 100px;
-        width: 100px;
-        background: transparent;
-        border: 2px solid #ffffff;
-        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.55);
-        box-sizing: border-box;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity .3s ease, visibility .3s ease;
-      }
-      .image-zoom-tracker {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 30;
-        width: 100%;
-        height: 100%;
-      }
-      .zoom-mask {
-        z-index: 20;
-        position: absolute;
-        overflow: hidden;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity .3s ease, visibility .3s ease;
-      }
+.wip-image-zoom {
+  display: block;
+  max-width: 100%;
+  user-select: none;
+  .main-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    .image-zoom-lens {
+      display: none;
+      position: absolute;
+      z-index: 25;
+      height: 100px;
+      width: 100px;
+      background: transparent;
+      border: 2px solid #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.55);
+      box-sizing: border-box;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .3s ease, visibility .3s ease;
     }
-    .main-image {
-      position: relative;
-      display: block;
-      z-index: 10;
+    .image-zoom-tracker {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
       width: 100%;
+      height: 100%;
     }
+    .zoom-mask {
+      z-index: 20;
+      position: absolute;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .3s ease, visibility .3s ease;
+    }
+    .immersive-mode-message {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      font-size: 12px;
+      font-weight: 400;
+      padding: 6px 8px;
+      margin-bottom: 12px;
+      z-index: 20;
+      text-align: center;
+    }
+  }
+  .main-image {
+    position: relative;
+    display: block;
+    z-index: 10;
+    width: 100%;
   }
   &.box-style {
     .zoom-mask {
@@ -245,6 +255,18 @@ html {
       .zoom-mask, .image-zoom-lens {
         opacity: 1;
         visibility: visible;
+      }
+    }
+  }
+  &.immersive-mode {
+    .main-image-wrapper {
+      overflow: hidden;
+      .zoom-mask, .image-zoom-lens {
+        opacity: 0;
+        visibility: hidden;
+      }
+      .image-zoom-tracker {
+        cursor: zoom-in !important;
       }
     }
   }
