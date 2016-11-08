@@ -375,13 +375,18 @@ function wipImageZoomDirective($timeout) {
                 update();
             });
 
+            if ($window.Ps) {
+                angular.element(document).on('ps-scroll-y', function () {
+                    initSizes();
+                });
+            }
+
             $scope.$watch(function () {
                 return {
                     left: vm.zoomTracker.getBoundingClientRect().left + $window.scrollX,
                     top : vm.zoomTracker.getBoundingClientRect().top + $window.scrollY
                 };
             }, function (newVal, oldVal) {
-                zoomStateDisable();
                 if (angular.isDefined(newVal) && newVal !== oldVal) {
                     update();
                 }
