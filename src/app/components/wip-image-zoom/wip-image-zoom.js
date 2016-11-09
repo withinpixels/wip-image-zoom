@@ -8,12 +8,10 @@ angular
     .directive('wipImageZoomImage', wipImageZoomImageDirective)
     .directive('wipImageZoomThumbs', wipImageZoomThumbsDirective);
 
-var imageZoomTemplate = '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\n     \'active\':vm.zoomActive, \n     \'immersive-mode\':vm.immersiveModeActive && !immersive,\n     \'box-style\':vm.options.style == \'box\' ,\n     \'inner-style\':vm.options.style == \'inner\'}">\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n    <div class="main-image-wrapper">\n        <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n        <div class="image-zoom-lens" wip-image-zoom-lens></div>\n        <img class="main-image" ng-src="{{vm.mainImage.medium}}">\n        <div class="zoom-mask"\n             ng-class="vm.options.style == \'box\' ? vm.options.boxPos:\'\'"\n             wip-image-zoom-mask>\n            <img wip-image-zoom-image class="zoom-image main-image-large"\n                 ng-src="{{vm.mainImage.large}}" image-on-load="vm.initZoom()">\n        </div>\n        <div ng-if="vm.immersiveModeActive && !immersive && vm.options.immersiveModeMessage !== \'\'"\n             class="immersive-mode-message" ng-bind="vm.options.immersiveModeMessage"></div>\n    </div>\n\n    <wip-image-zoom-thumbs\n            ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n</div>';
-
 function wipImageZoomDirective($timeout) {
     return {
         restrict    : 'EA',
-        template    : imageZoomTemplate,
+        template    : '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\n     \'active\':vm.zoomActive, \n     \'immersive-mode\':vm.immersiveModeActive && !immersive,\n     \'box-style\':vm.options.style == \'box\' ,\n     \'inner-style\':vm.options.style == \'inner\'}">\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n    <div class="main-image-wrapper">\n        <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n        <div class="image-zoom-lens" wip-image-zoom-lens></div>\n        <img class="main-image" ng-src="{{vm.mainImage.medium}}">\n        <div class="zoom-mask"\n             ng-class="vm.options.style == \'box\' ? vm.options.boxPos:\'\'"\n             wip-image-zoom-mask>\n            <img wip-image-zoom-image class="zoom-image main-image-large"\n                 ng-src="{{vm.mainImage.large}}" image-on-load="vm.initZoom()">\n        </div>\n        <div ng-if="vm.immersiveModeActive && !immersive && vm.options.immersiveModeMessage !== \'\'"\n             class="immersive-mode-message" ng-bind="vm.options.immersiveModeMessage"></div>\n    </div>\n\n    <wip-image-zoom-thumbs\n            ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n</div>',
         replace     : true,
         scope       : {
             selectedModel: '=?',
@@ -66,7 +64,7 @@ function wipImageZoomDirective($timeout) {
             vm.thumbWidth;
             vm.thumbsWrapperWidth;
             vm.thumbsWidth;
-            vm.thumbsPosX;
+            vm.thumbsPos = 0;
             vm.immersiveModeActive;
 
             vm.init = init;
@@ -95,10 +93,9 @@ function wipImageZoomDirective($timeout) {
                 }
 
                 updateTimeout = $timeout(function () {
-                    initThumbs(function () {
-                        initZoom();
-                        updateThumbsPos();
-                    });
+                    initThumbs();
+                    initZoom();
+                    updateThumbsPos();
                 }, 400);
             }
 
@@ -174,15 +171,14 @@ function wipImageZoomDirective($timeout) {
                 });
             }
 
-            function initThumbs(callback) {
-                scrollThumbs(0);
+            function initThumbs() {
                 vm.thumbsWrapperWidth = vm.thumbsWrapper.clientWidth;
                 vm.thumbWidth = Math.round((vm.thumbsWrapperWidth + vm.options.thumbColPadding) / vm.options.thumbCol);
                 vm.thumbsWidth = vm.thumbWidth * vm.images.length;
+                vm.maxPosX = vm.images.length - vm.options.thumbCol;
+
                 // Set Thumbnail width
                 $scope.$evalAsync(function () {
-                    vm.thumbsPosX = 0;
-
                     if (vm.options.thumbsPos == 'top') {
                         vm.thumbsEl.style.paddingBottom = vm.options.thumbColPadding + 'px';
                         vm.thumbsEl.style.paddingTop = 0;
@@ -196,26 +192,23 @@ function wipImageZoomDirective($timeout) {
                         thumb.style.width = vm.thumbWidth + 'px';
                         thumb.style.paddingRight = vm.options.thumbColPadding + 'px';
                     }
-                    if (callback) {
-                        return callback();
-                    }
                 });
             }
 
             function nextThumb() {
-                vm.thumbsPosX = vm.thumbsPosX + vm.thumbWidth;
-                scrollThumbs(vm.thumbsPosX * -1);
+                scrollThumbs(vm.thumbsPos + 1);
             }
 
             function prevThumb() {
-                vm.thumbsPosX = vm.thumbsPosX - vm.thumbWidth;
-                scrollThumbs(vm.thumbsPosX * -1);
+                scrollThumbs(vm.thumbsPos - 1);
             }
 
-            function scrollThumbs(posX, posY) {
-                posX = posX || 0;
-                posY = posY || 0;
-                vm.thumbsEl.style.transform = 'translate3d(' + posX + 'px,' + posY + 'px, 0)';
+            function scrollThumbs(newPosX) {
+                newPosX = newPosX < 0 ? 0 : newPosX;
+                newPosX = newPosX > vm.maxPosX ? vm.maxPosX : newPosX;
+                vm.thumbsPos = newPosX;
+                var scrollX = vm.thumbsPos * vm.thumbWidth * -1;
+                vm.thumbsEl.style.transform = 'translate3d(' + scrollX + 'px, 0px, 0)';
             }
 
             function initSizes() {
@@ -309,26 +302,16 @@ function wipImageZoomDirective($timeout) {
                 lensPosY = lensPosY < 0 ? 0 : lensPosY;
 
                 vm.zoomLens.style.transform = 'translate3d(' + lensPosX + 'px,' + lensPosY + 'px,0)';
-
             }
 
             function updateThumbsPos() {
                 var selectedIndex = getSelectedIndex();
-                var selectedEl = vm.thumbsEl.children[selectedIndex];
-                var isInView = vm.thumbsPosX <= selectedEl.offsetLeft && selectedEl.offsetLeft < vm.thumbsPosX + vm.thumbsWrapperWidth;
-
+                var isInView = vm.thumbsPos + vm.options.thumbCol > selectedIndex && vm.thumbsPos < selectedIndex;
                 if (isInView) {
+                    scrollThumbs(vm.thumbsPos);
                     return;
                 }
-
-                vm.thumbsPosX = selectedEl.offsetLeft;
-
-                if ((vm.thumbsWidth - vm.thumbsPosX) <= vm.thumbsWrapperWidth) {
-                    vm.thumbsPosX = vm.thumbWidth * (vm.options.images.length - vm.options.thumbCol);
-                }
-
-                scrollThumbs(vm.thumbsPosX * -1);
-
+                scrollThumbs(selectedIndex);
             }
 
             function getSelectedIndex() {
@@ -446,7 +429,7 @@ function wipImageZoomThumbsDirective() {
     return {
         restrict: 'EA',
         require : '^wipImageZoom',
-        template: '<div class="thumbs-wrapper">\n    <div class="thumbs">\n        <div class="thumb-wrapper" ng-repeat="image in vm.images">\n            <img ng-src="{{image.thumb}}" ng-click="vm.updateMainImage(image)"\n                 ng-class="{\'selected\': vm.mainImage.thumb === image.thumb}">\n        </div>\n    </div>\n</div>\n<div class="prev-button" ng-if="vm.thumbsPosX !== 0"\n     ng-click="vm.prevThumb()"\n     ng-bind-html="vm.options.prevThumbButton">Prev\n</div>\n<div class="next-button"\n     ng-if="vm.thumbsPosX < vm.thumbWidth * (vm.options.images.length - vm.options.thumbCol)"\n     ng-click="vm.nextThumb()"\n     ng-bind-html="vm.options.nextThumbButton">Next\n</div>',
+        template: '<div class="thumbs-wrapper">\n    <div class="thumbs">\n        <div class="thumb-wrapper" ng-repeat="image in vm.images">\n            <img ng-src="{{image.thumb}}" ng-click="vm.updateMainImage(image)"\n                 ng-class="{\'selected\': vm.mainImage.thumb === image.thumb}">\n        </div>\n    </div>\n</div>\n<div class="prev-button" \n     ng-if="vm.thumbsPos !== 0"\n     ng-click="vm.prevThumb()"\n     ng-bind-html="vm.options.prevThumbButton">Prev\n</div>\n<div class="next-button"\n     ng-if="vm.thumbsPos !== vm.maxPosX"\n     ng-click="vm.nextThumb()"\n     ng-bind-html="vm.options.nextThumbButton">Next\n</div>',
         link    : function (scope, element, attrs, ctrl) {
             ctrl.thumbsWrapper = element[0].getElementsByClassName('thumbs-wrapper')[0];
             ctrl.thumbsEl = element[0].getElementsByClassName('thumbs')[0];
