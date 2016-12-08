@@ -76,6 +76,9 @@ html {
       opacity: 0;
       visibility: hidden;
       transition: opacity .3s ease, visibility .3s ease;
+      .zoom-image {
+        max-width: none;
+      }
     }
     .immersive-mode-message {
       position: absolute;
