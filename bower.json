@@ -1,6 +1,6 @@
 {
   "name": "wip-image-zoom",
-  "version": "0.1.4-beta",
+  "version": "0.1.5.1-beta",
   "dependencies": {
     "angular": "~1.5.9",
     "angular-sanitize": "^1.5.9"
