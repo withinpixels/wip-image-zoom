@@ -87,6 +87,10 @@ html body .immersive-wip-image-zoom > .wip-image-zoom {
   transition: opacity .3s ease, visibility .3s ease;
 }
 
+.wip-image-zoom .main-image-wrapper .zoom-mask .zoom-image {
+  max-width: none;
+}
+
 .wip-image-zoom .main-image-wrapper .immersive-mode-message {
   position: absolute;
   bottom: 0;
