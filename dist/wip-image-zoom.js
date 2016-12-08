@@ -174,6 +174,9 @@ function wipImageZoomDirective($timeout) {
             }
 
             function initThumbs() {
+                if (vm.images.length <= 1) {
+                    return;
+                }
                 vm.thumbsWrapperWidth = vm.thumbsWrapper.clientWidth;
                 vm.thumbWidth = Math.round((vm.thumbsWrapperWidth + vm.options.thumbColPadding) / vm.options.thumbCol);
                 vm.thumbsWidth = vm.thumbWidth * vm.images.length;
@@ -307,6 +310,9 @@ function wipImageZoomDirective($timeout) {
             }
 
             function updateThumbsPos() {
+                if (vm.images.length <= 1) {
+                    return;
+                }
                 var selectedIndex = getSelectedIndex();
                 var isInView = vm.thumbsPos + vm.options.thumbCol > selectedIndex && vm.thumbsPos < selectedIndex;
                 if (isInView) {
