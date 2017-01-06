@@ -1,7 +1,7 @@
 
 imageOnLoadDirective.$inject = ["$log"];
 wipImageZoomDirective.$inject = ["$timeout"];angular
-    .module('wipImageZoom', ['ngSanitize'])
+    .module('wipImageZoom', ['ngSanitize', 'ngTouch'])
     .directive('imageOnLoad', imageOnLoadDirective)
     .directive('wipImageZoom', wipImageZoomDirective)
     .directive('wipImageZoomTracker', wipImageZoomTrackerDirective)
@@ -10,7 +10,8 @@ wipImageZoomDirective.$inject = ["$timeout"];angular
     .directive('wipImageZoomImage', wipImageZoomImageDirective)
     .directive('wipImageZoomThumbs', wipImageZoomThumbsDirective);
 
-function wipImageZoomDirective($timeout) {
+function wipImageZoomDirective($timeout)
+{
     return {
         restrict    : 'EA',
         template    : '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\n     \'active\':vm.zoomActive, \n     \'immersive-mode\':vm.immersiveModeActive && !immersive,\n     \'box-style\':vm.options.style == \'box\' ,\n     \'inner-style\':vm.options.style == \'inner\'}">\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n    <div class="main-image-wrapper">\n        <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n        <div class="image-zoom-lens" wip-image-zoom-lens></div>\n        <img class="main-image" ng-src="{{vm.mainImage.medium}}">\n        <div class="zoom-mask"\n             ng-class="vm.options.style == \'box\' ? vm.options.boxPos:\'\'"\n             wip-image-zoom-mask>\n            <img wip-image-zoom-image class="zoom-image main-image-large"\n                 ng-src="{{vm.mainImage.large}}" image-on-load="vm.initZoom()">\n        </div>\n        <div ng-if="vm.immersiveModeActive && !immersive && vm.options.immersiveModeMessage !== \'\'"\n             class="immersive-mode-message" ng-bind="vm.options.immersiveModeMessage"></div>\n    </div>\n\n    <wip-image-zoom-thumbs\n            ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n</div>',
@@ -22,11 +23,13 @@ function wipImageZoomDirective($timeout) {
             immersive    : '=?'
         },
         controllerAs: 'vm',
-        link        : function (scope, element, attrs, ctrl) {
+        link        : function (scope, element, attrs, ctrl)
+        {
             ctrl.el = element;
             ctrl.init();
         },
-        controller  : ["$scope", "$document", "$window", "$compile", function ($scope, $document, $window, $compile) {
+        controller  : ["$scope", "$document", "$window", "$compile", function ($scope, $document, $window, $compile)
+        {
             var vm = this,
                 evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskW, maskH, zoomImgW, zoomImgH, lensW, lensH, lensPosX, lensPosY, zoomLevelRatio,
                 defaultOpts = {
@@ -78,7 +81,8 @@ function wipImageZoomDirective($timeout) {
             vm.prevThumb = prevThumb;
             vm.disableImmersiveMode = disableImmersiveMode;
 
-            function init() {
+            function init()
+            {
                 vm.options = !$scope.wipImageZoom ? defaultOpts : angular.extend(defaultOpts, $scope.wipImageZoom);
                 vm.images = vm.options.images;
 
@@ -88,27 +92,34 @@ function wipImageZoomDirective($timeout) {
                 $scope.selectedModel = vm.mainImage;
             }
 
-            function update() {
+            function update()
+            {
                 // Debounce for update
-                if (updateTimeout) {
+                if ( updateTimeout )
+                {
                     $timeout.cancel(updateTimeout);
                 }
 
-                updateTimeout = $timeout(function () {
+                updateTimeout = $timeout(function ()
+                {
                     initThumbs();
                     initZoom();
                     updateThumbsPos();
                 }, 400);
             }
 
-            function initZoom() {
+            function initZoom()
+            {
                 initSizes();
 
                 vm.zoomTracker.style.cursor = vm.options.cursor;
 
-                if (vm.options.lens) {
+                if ( vm.options.lens )
+                {
                     vm.zoomLens.style.display = 'block';
-                } else {
+                }
+                else
+                {
                     vm.zoomLens.style.display = 'none';
                 }
 
@@ -117,17 +128,20 @@ function wipImageZoomDirective($timeout) {
 
                 vm.immersiveModeActive = vm.options.immersiveMode && vm.options.immersiveMode > $window.innerWidth;
 
-                if (vm.immersiveModeActive && !$scope.immersive) {
+                if ( vm.immersiveModeActive && !$scope.immersive )
+                {
                     vm.zoomTracker.addEventListener('mousedown', enableImmersiveMode);
                 }
 
-                if (!vm.immersiveModeActive || $scope.immersive) {
+                if ( !vm.immersiveModeActive || $scope.immersive )
+                {
                     addEventListeners();
                 }
 
             }
 
-            function addEventListeners() {
+            function addEventListeners()
+            {
                 vm.zoomTracker.addEventListener('mousemove', zoomStateEnable);
                 vm.zoomTracker.addEventListener('touchstart', zoomStateEnable);
 
@@ -138,7 +152,8 @@ function wipImageZoomDirective($timeout) {
                 vm.zoomTracker.addEventListener('touchmove', setZoomImagePosition);
             }
 
-            function removeEventListeners() {
+            function removeEventListeners()
+            {
                 vm.zoomTracker.removeEventListener('mousedown', enableImmersiveMode);
 
                 vm.zoomTracker.removeEventListener('mousemove', zoomStateEnable);
@@ -151,17 +166,20 @@ function wipImageZoomDirective($timeout) {
                 vm.zoomTracker.removeEventListener('touchmove', setZoomImagePosition);
             }
 
-            function disableImmersiveMode() {
+            function disableImmersiveMode()
+            {
                 $document.find('html').removeClass('wip-image-zoom-immersive-mode-enabled');
                 removeEventListeners();
                 vm.immersedEl.remove();
                 update();
             }
 
-            function enableImmersiveMode(ev) {
+            function enableImmersiveMode(ev)
+            {
                 ev.preventDefault();
                 ev.stopPropagation();
-                $scope.$apply(function () {
+                $scope.$apply(function ()
+                {
                     $document.find('html').addClass('wip-image-zoom-immersive-mode-enabled');
                     var body = $document.find('body').eq(0);
                     vm.immersedImageOpt = angular.copy(vm.options);
@@ -173,8 +191,10 @@ function wipImageZoomDirective($timeout) {
                 });
             }
 
-            function initThumbs() {
-                if (vm.images.length <= 1) {
+            function initThumbs()
+            {
+                if ( vm.images.length <= 1 )
+                {
                     return;
                 }
                 vm.thumbsWrapperWidth = vm.thumbsWrapper.clientWidth;
@@ -183,16 +203,21 @@ function wipImageZoomDirective($timeout) {
                 vm.maxPosX = vm.images.length - vm.options.thumbCol;
 
                 // Set Thumbnail width
-                $scope.$evalAsync(function () {
-                    if (vm.options.thumbsPos == 'top') {
+                $scope.$evalAsync(function ()
+                {
+                    if ( vm.options.thumbsPos == 'top' )
+                    {
                         vm.thumbsEl.style.paddingBottom = vm.options.thumbColPadding + 'px';
                         vm.thumbsEl.style.paddingTop = 0;
-                    } else {
+                    }
+                    else
+                    {
                         vm.thumbsEl.style.paddingTop = vm.options.thumbColPadding + 'px';
                         vm.thumbsEl.style.paddingBottom = 0;
                     }
 
-                    for (var i = 0; i < vm.thumbsEl.children.length; i++) {
+                    for ( var i = 0; i < vm.thumbsEl.children.length; i++ )
+                    {
                         var thumb = vm.thumbsEl.children[i];
                         thumb.style.width = vm.thumbWidth + 'px';
                         thumb.style.paddingRight = vm.options.thumbColPadding + 'px';
@@ -200,15 +225,18 @@ function wipImageZoomDirective($timeout) {
                 });
             }
 
-            function nextThumb() {
+            function nextThumb()
+            {
                 scrollThumbs(vm.thumbsPos + 1);
             }
 
-            function prevThumb() {
+            function prevThumb()
+            {
                 scrollThumbs(vm.thumbsPos - 1);
             }
 
-            function scrollThumbs(newPosX) {
+            function scrollThumbs(newPosX)
+            {
                 newPosX = newPosX < 0 ? 0 : newPosX;
                 newPosX = newPosX > vm.maxPosX ? vm.maxPosX : newPosX;
                 vm.thumbsPos = newPosX;
@@ -216,7 +244,8 @@ function wipImageZoomDirective($timeout) {
                 vm.thumbsEl.style.transform = 'translate3d(' + scrollX + 'px, 0px, 0)';
             }
 
-            function initSizes() {
+            function initSizes()
+            {
                 var tracker = vm.zoomTracker.getBoundingClientRect();
                 trackerW = tracker.width;
                 trackerH = tracker.height;
@@ -224,21 +253,24 @@ function wipImageZoomDirective($timeout) {
                 trackerT = tracker.top + $window.scrollY;
 
                 // Box Style
-                if (vm.options.style == 'box' && !$scope.immersive) {
+                if ( vm.options.style == 'box' && !$scope.immersive )
+                {
                     maskW = vm.options.boxW;
                     maskH = vm.options.boxH;
                     vm.zoomMaskEl.style.width = maskW + 'px';
                     vm.zoomMaskEl.style.height = maskH + 'px';
                 }
                 // Inner Style
-                else {
+                else
+                {
                     maskW = trackerW;
                     maskH = trackerH;
                     vm.zoomMaskEl.style.width = '100%';
                     vm.zoomMaskEl.style.height = '100%';
                 }
 
-                if (vm.options.zoomLevel > 1) {
+                if ( vm.options.zoomLevel > 1 )
+                {
                     vm.zoomImageEl.style.width = trackerW * vm.options.zoomLevel + 'px';
                     vm.zoomImageEl.style.height = trackerH * vm.options.zoomLevel + 'px';
                 }
@@ -250,7 +282,8 @@ function wipImageZoomDirective($timeout) {
 
             }
 
-            function setZoomImagePosition(e) {
+            function setZoomImagePosition(e)
+            {
                 e.preventDefault();
                 var te = e.type == 'touchmove' && e.touches && e.touches[0];
 
@@ -259,23 +292,27 @@ function wipImageZoomDirective($timeout) {
 
                 setLensPosition();
 
-                if (vm.options.method === 'lens') {
+                if ( vm.options.method === 'lens' )
+                {
                     trackLens();
                 }
                 // pointer
-                else {
+                else
+                {
                     trackPointer();
                 }
 
             }
 
-            function trackLens() {
+            function trackLens()
+            {
                 var posX = [(zoomImgW - maskW + lensW * 1 / zoomLevelRatio) * [(lensPosX / trackerW)]];
                 var posY = [(zoomImgH - maskH + lensH * 1 / zoomLevelRatio) * [lensPosY / trackerH]];
                 vm.zoomImageEl.style.transform = 'translate3d(' + posX * -1 + 'px,' + posY * -1 + 'px,0)';
             }
 
-            function trackPointer() {
+            function trackPointer()
+            {
                 var posX = [(zoomImgW - maskW) * [(evPosX - trackerL) / trackerW]];
                 var posY = [(zoomImgH - maskH) * [(evPosY - trackerT) / trackerH]];
 
@@ -288,7 +325,8 @@ function wipImageZoomDirective($timeout) {
                 vm.zoomImageEl.style.transform = 'translate3d(' + posX * -1 + 'px,' + posY * -1 + 'px,0)';
             }
 
-            function setLensSize() {
+            function setLensSize()
+            {
                 zoomLevelRatio = trackerW / zoomImgW;
                 lensW = maskW * zoomLevelRatio;
                 lensH = maskH * zoomLevelRatio;
@@ -296,7 +334,8 @@ function wipImageZoomDirective($timeout) {
                 vm.zoomLens.style.height = lensH + 'px';
             }
 
-            function setLensPosition() {
+            function setLensPosition()
+            {
                 lensPosX = (evPosX - trackerL) - lensW * 0.5;
                 lensPosY = (evPosY - trackerT) - lensH * 0.5;
 
@@ -309,82 +348,105 @@ function wipImageZoomDirective($timeout) {
                 vm.zoomLens.style.transform = 'translate3d(' + lensPosX + 'px,' + lensPosY + 'px,0)';
             }
 
-            function updateThumbsPos() {
-                if (vm.images.length <= 1) {
+            function updateThumbsPos()
+            {
+                if ( vm.images.length <= 1 )
+                {
                     return;
                 }
                 var selectedIndex = getSelectedIndex();
                 var isInView = vm.thumbsPos + vm.options.thumbCol > selectedIndex && vm.thumbsPos < selectedIndex;
-                if (isInView) {
+                if ( isInView )
+                {
                     scrollThumbs(vm.thumbsPos);
                     return;
                 }
                 scrollThumbs(selectedIndex);
             }
 
-            function getSelectedIndex() {
-                for (var i = 0; i < vm.images.length; i++) {
-                    if (vm.images[i].medium === vm.mainImage.medium) {
+            function getSelectedIndex()
+            {
+                for ( var i = 0; i < vm.images.length; i++ )
+                {
+                    if ( vm.images[i].medium === vm.mainImage.medium )
+                    {
                         return i;
                     }
                 }
             }
 
-            function zoomStateEnable() {
-                $scope.$evalAsync(function () {
+            function zoomStateEnable()
+            {
+                $scope.$evalAsync(function ()
+                {
                     vm.zoomActive = true;
                 })
             }
 
-            function zoomStateDisable() {
-                $scope.$evalAsync(function () {
+            function zoomStateDisable()
+            {
+                $scope.$evalAsync(function ()
+                {
                     vm.zoomActive = false;
                 })
             }
 
-            function updateMainImage(image) {
+            function updateMainImage(image)
+            {
                 vm.mainImage = image;
                 $scope.selectedModel = vm.mainImage;
                 $scope.selectedIndex = vm.images.indexOf(vm.mainImage);
             }
 
-            $scope.$watch('selectedModel', function (newVal, oldVal) {
-                if (angular.isDefined(newVal) && newVal !== oldVal) {
+            $scope.$watch('selectedModel', function (newVal, oldVal)
+            {
+                if ( angular.isDefined(newVal) && newVal !== oldVal )
+                {
                     vm.mainImage = newVal;
                     updateThumbsPos();
                 }
             }, true);
 
-            $scope.$watch('selectedIndex', function (newVal, oldVal) {
-                if (angular.isDefined(newVal) && newVal !== oldVal) {
+            $scope.$watch('selectedIndex', function (newVal, oldVal)
+            {
+                if ( angular.isDefined(newVal) && newVal !== oldVal )
+                {
                     vm.mainImage = vm.images[newVal];
                     updateThumbsPos();
                 }
             }, true);
 
-            angular.element(window).on('resize', function () {
+            angular.element(window).on('resize', function ()
+            {
                 update();
             });
 
-            if ($window.Ps) {
-                angular.element(document).on('ps-scroll-y', function () {
+            if ( $window.Ps )
+            {
+                angular.element(document).on('ps-scroll-y', function ()
+                {
                     initSizes();
                 });
             }
 
-            $scope.$watch(function () {
+            $scope.$watch(function ()
+            {
                 return {
                     left: vm.zoomTracker.getBoundingClientRect().left + $window.scrollX,
                     top : vm.zoomTracker.getBoundingClientRect().top + $window.scrollY
                 };
-            }, function (newVal, oldVal) {
-                if (angular.isDefined(newVal) && newVal !== oldVal) {
+            }, function (newVal, oldVal)
+            {
+                if ( angular.isDefined(newVal) && newVal !== oldVal )
+                {
                     update();
                 }
             }, true);
 
-            $scope.$watch('wipImageZoom', function (newVal, oldVal) {
-                if (angular.isDefined(newVal) && newVal !== oldVal) {
+            $scope.$watch('wipImageZoom', function (newVal, oldVal)
+            {
+                if ( angular.isDefined(newVal) && newVal !== oldVal )
+                {
                     init();
                     update();
                 }
@@ -393,52 +455,62 @@ function wipImageZoomDirective($timeout) {
     }
 }
 
-function wipImageZoomLensDirective() {
+function wipImageZoomLensDirective()
+{
     return {
         restrict: 'EA',
         require : '^wipImageZoom',
-        link    : function (scope, element, attrs, ctrl) {
+        link    : function (scope, element, attrs, ctrl)
+        {
             ctrl.zoomLens = element[0];
         }
     }
 }
 
-function wipImageZoomTrackerDirective() {
+function wipImageZoomTrackerDirective()
+{
     return {
         restrict: 'EA',
         require : '^wipImageZoom',
-        link    : function (scope, element, attrs, ctrl) {
+        link    : function (scope, element, attrs, ctrl)
+        {
             ctrl.zoomTracker = element[0];
         }
     }
 }
 
-function wipImageZoomMaskDirective() {
+function wipImageZoomMaskDirective()
+{
     return {
         restrict: 'EA',
         require : '^wipImageZoom',
-        link    : function (scope, element, attrs, ctrl) {
+        link    : function (scope, element, attrs, ctrl)
+        {
             ctrl.zoomMaskEl = element[0];
         }
     }
 }
 
-function wipImageZoomImageDirective() {
+function wipImageZoomImageDirective()
+{
     return {
         restrict: 'EA',
         require : '^wipImageZoom',
-        link    : function (scope, element, attrs, ctrl) {
+        link    : function (scope, element, attrs, ctrl)
+        {
             ctrl.zoomImageEl = element[0];
         }
     }
 }
 
-function wipImageZoomThumbsDirective() {
+function wipImageZoomThumbsDirective()
+{
     return {
         restrict: 'EA',
         require : '^wipImageZoom',
-        template: '<div class="thumbs-wrapper">\n    <div class="thumbs">\n        <div class="thumb-wrapper" ng-repeat="image in vm.images">\n            <img ng-src="{{image.thumb}}" ng-click="vm.updateMainImage(image)"\n                 ng-class="{\'selected\': vm.mainImage.thumb === image.thumb}">\n        </div>\n    </div>\n</div>\n<div class="prev-button" \n     ng-if="vm.thumbsPos !== 0"\n     ng-click="vm.prevThumb()"\n     ng-bind-html="vm.options.prevThumbButton">Prev\n</div>\n<div class="next-button"\n     ng-if="vm.thumbsPos !== vm.maxPosX"\n     ng-click="vm.nextThumb()"\n     ng-bind-html="vm.options.nextThumbButton">Next\n</div>',
-        link    : function (scope, element, attrs, ctrl) {
+        template: '<div class="thumbs-wrapper" ng-swipe-left="vm.nextThumb()" ng-swipe-right="vm.prevThumb()">\n    <div class="thumbs" >\n        <div class="thumb-wrapper" ng-repeat="image in vm.images">\n            <img ng-src="{{image.thumb}}" ng-click="vm.updateMainImage(image)"\n                 ng-class="{\'selected\': vm.mainImage.thumb === image.thumb}">\n        </div>\n    </div>\n</div>\n<div class="prev-button"\n     ng-if="vm.thumbsPos !== 0"\n     ng-click="vm.prevThumb()"\n     ng-bind-html="vm.options.prevThumbButton">Prev\n</div>\n<div class="next-button"\n     ng-if="vm.thumbsPos !== vm.maxPosX"\n     ng-click="vm.nextThumb()"\n     ng-bind-html="vm.options.nextThumbButton">Next\n</div>',
+        link    : function (scope, element, attrs, ctrl)
+        {
             ctrl.thumbsWrapper = element[0].getElementsByClassName('thumbs-wrapper')[0];
             ctrl.thumbsEl = element[0].getElementsByClassName('thumbs')[0];
             ctrl.initThumbs();
@@ -446,14 +518,18 @@ function wipImageZoomThumbsDirective() {
     }
 }
 
-function imageOnLoadDirective($log) {
+function imageOnLoadDirective($log)
+{
     return {
         restrict: 'A',
-        link    : function (scope, element, attrs) {
-            element[0].addEventListener('load', function () {
+        link    : function (scope, element, attrs)
+        {
+            element[0].addEventListener('load', function ()
+            {
                 scope.$apply(attrs.imageOnLoad);
             }, false);
-            element[0].addEventListener('error', function () {
+            element[0].addEventListener('error', function ()
+            {
                 $log.warn('image could not be loaded');
             });
         }
