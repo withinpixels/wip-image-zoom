@@ -50,6 +50,14 @@ html body .immersive-wip-image-zoom > .wip-image-zoom {
   overflow: hidden;
 }
 
+.wip-image-zoom .main-image-wrapper.loading .image-zoom-tracker {
+  cursor: wait !important;
+}
+
+.wip-image-zoom .main-image-wrapper.loading .main-image {
+  z-index: 28 !important;
+}
+
 .wip-image-zoom .main-image-wrapper .image-zoom-lens {
   display: none;
   position: absolute;
@@ -57,7 +65,7 @@ html body .immersive-wip-image-zoom > .wip-image-zoom {
   height: 100px;
   width: 100px;
   background: transparent;
-  border: 2px solid #ffffff;
+  border: 2px solid #FFFFFF;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.55);
   box-sizing: border-box;
   opacity: 0;
@@ -73,8 +81,6 @@ html body .immersive-wip-image-zoom > .wip-image-zoom {
   right: 0;
   bottom: 0;
   z-index: 30;
-  width: 100%;
-  height: 100%;
 }
 
 .wip-image-zoom .main-image-wrapper .zoom-mask {
@@ -230,7 +236,7 @@ html body .immersive-wip-image-zoom > .wip-image-zoom {
 }
 
 .wip-image-zoom.top-thumbs wip-image-zoom-thumbs .thumbs-wrapper .thumbs .thumb-wrapper > img.selected, .wip-image-zoom.bottom-thumbs wip-image-zoom-thumbs .thumbs-wrapper .thumbs .thumb-wrapper > img.selected {
-  box-shadow: 0 2px 0 0 #9c0033;
+  box-shadow: 0 2px 0 0 #9C0033;
 }
 
 .wip-image-zoom.top-thumbs wip-image-zoom-thumbs .prev-button,
@@ -285,11 +291,11 @@ html body .immersive-wip-image-zoom > .wip-image-zoom {
   height: 100%;
 }
 
-.wip-image-zoom.active .main-image-wrapper {
+.wip-image-zoom.active .main-image-wrapper:not(.loading) {
   overflow: visible;
 }
 
-.wip-image-zoom.active .main-image-wrapper .zoom-mask, .wip-image-zoom.active .main-image-wrapper .image-zoom-lens {
+.wip-image-zoom.active .main-image-wrapper:not(.loading) .zoom-mask, .wip-image-zoom.active .main-image-wrapper:not(.loading) .image-zoom-lens {
   opacity: 1;
   visibility: visible;
 }
