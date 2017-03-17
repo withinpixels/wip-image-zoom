@@ -169,7 +169,7 @@ function wipImageZoomDirective($timeout)
                 // Reset Event Listeners
                 removeEventListeners();
 
-                vm.immersiveModeActive = vm.options.immersiveMode && vm.options.immersiveMode > $window.innerWidth || vm.options.immersiveMode === 'allways';
+                vm.immersiveModeActive = vm.options.immersiveMode && vm.options.immersiveMode > $window.innerWidth || vm.options.immersiveMode === 'always';
 
                 if ( vm.immersiveModeActive && !$scope.immersive )
                 {
@@ -444,6 +444,7 @@ function wipImageZoomDirective($timeout)
             function largeImageLoaded()
             {
                 vm.largeImageLoading = false;
+                initSizes();
             }
 
             $scope.$watch('selectedModel', function (newVal, oldVal)

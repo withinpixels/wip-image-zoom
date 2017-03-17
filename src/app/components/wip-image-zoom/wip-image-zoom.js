@@ -442,6 +442,7 @@ function wipImageZoomDirective($timeout)
             function largeImageLoaded()
             {
                 vm.largeImageLoading = false;
+                initSizes();
             }
 
             $scope.$watch('selectedModel', function (newVal, oldVal)
