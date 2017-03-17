@@ -1,4 +1,5 @@
-(function () {
+(function ()
+{
     'use strict';
 
     angular
@@ -6,7 +7,8 @@
         .controller('MainController', MainController);
 
     /** @ngInject */
-    function MainController() {
+    function MainController()
+    {
         var vm = this;
         vm.zoomOptions1 = {
             defaultImage   : 0,

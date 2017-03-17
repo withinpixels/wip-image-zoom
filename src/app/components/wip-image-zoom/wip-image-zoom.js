@@ -12,7 +12,7 @@ function wipImageZoomDirective($timeout)
 {
     return {
         restrict    : 'EA',
-        template    : '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\n     \'active\':vm.zoomActive, \n     \'immersive-mode\':vm.immersiveModeActive && !immersive,\n     \'box-style\':vm.options.style == \'box\' ,\n     \'inner-style\':vm.options.style == \'inner\'}">\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n    <div class="main-image-wrapper">\n        <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n        <div class="image-zoom-lens" wip-image-zoom-lens></div>\n        <img class="main-image" ng-src="{{vm.mainImage.medium}}">\n        <div class="zoom-mask"\n             ng-class="vm.options.style == \'box\' ? vm.options.boxPos:\'\'"\n             wip-image-zoom-mask>\n            <img wip-image-zoom-image class="zoom-image main-image-large"\n                 ng-src="{{vm.mainImage.large}}" image-on-load="vm.initZoom()">\n        </div>\n        <div ng-if="vm.immersiveModeActive && !immersive && vm.options.immersiveModeMessage !== \'\'"\n             class="immersive-mode-message" ng-bind="vm.options.immersiveModeMessage"></div>\n    </div>\n\n    <wip-image-zoom-thumbs\n            ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n</div>',
+        template    : '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\n     \'active\':vm.zoomActive, \n     \'immersive-mode\':vm.immersiveModeActive && !immersive,\n     \'box-style\':vm.options.style == \'box\' ,\n     \'inner-style\':vm.options.style == \'inner\'}">\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n    <div class="main-image-wrapper" ng-class="{\'loading\':vm.largeImageLoading}">\n        <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n        <div class="image-zoom-lens" wip-image-zoom-lens></div>\n        <img class="main-image" ng-src="{{vm.mainImage.medium}}" image-on-load="vm.initZoom()">\n        <div class="zoom-mask"\n             ng-class="vm.options.style == \'box\'? vm.options.boxPos : \'\'"\n             wip-image-zoom-mask>\n            <img wip-image-zoom-image class="zoom-image main-image-large" image-on-load="vm.largeImageLoaded()"\n                 ng-src="{{vm.mainImage.large}}">\n        </div>\n        <div ng-if="vm.immersiveModeActive && !immersive && vm.options.immersiveModeMessage !== \'\'"\n             class="immersive-mode-message" ng-bind="vm.options.immersiveModeMessage"></div>\n    </div>\n\n    <wip-image-zoom-thumbs\n            ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n</div>',
         replace     : true,
         scope       : {
             selectedModel: '=?',
@@ -61,6 +61,7 @@ function wipImageZoomDirective($timeout)
             vm.options;
             vm.images = [];
             vm.zoomActive = false;
+            vm.largeImageLoading = true;
 
             vm.prevThumbActive = false;
             vm.nextThumbActive = false;
@@ -73,6 +74,7 @@ function wipImageZoomDirective($timeout)
             vm.init = init;
             vm.initZoom = initZoom;
             vm.initThumbs = initThumbs;
+            vm.largeImageLoaded = largeImageLoaded;
 
             vm.updateMainImage = updateMainImage;
             vm.nextThumb = nextThumb;
@@ -249,7 +251,6 @@ function wipImageZoomDirective($timeout)
                 trackerH = tracker.height;
                 trackerL = tracker.left + $window.scrollX;
                 trackerT = tracker.top + $window.scrollY;
-
                 // Box Style
                 if ( vm.options.style == 'box' && !$scope.immersive )
                 {
@@ -391,9 +392,15 @@ function wipImageZoomDirective($timeout)
 
             function updateMainImage(image)
             {
+                vm.largeImageLoading = true;
                 vm.mainImage = image;
                 $scope.selectedModel = vm.mainImage;
                 $scope.selectedIndex = vm.images.indexOf(vm.mainImage);
+            }
+
+            function largeImageLoaded()
+            {
+                vm.largeImageLoading = false;
             }
 
             $scope.$watch('selectedModel', function (newVal, oldVal)
