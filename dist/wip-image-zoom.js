@@ -15,6 +15,7 @@ wipImageZoomDirective.$inject = ["$timeout"];angular
 function wipImageZoomConfig()
 {
     this.defaults = {
+        zoomEnable          : true,
         defaultIndex        : 0, // Order of the default selected Image
         images              : [],
         style               : 'inner', // inner or box
@@ -25,7 +26,8 @@ function wipImageZoomConfig()
         cursor              : 'crosshair', // 'none', 'default', 'crosshair', 'pointer', 'move'
         lens                : true,
         zoomLevel           : 3, // 0: not scales, uses the original large image size, use 1 and above to adjust.
-        immersiveMode       : 769, // false or 0 for disable, max width(px) for trigger
+        immersiveMode       : '769', // false or 0 for disable, always, max width(px) for trigger
+        immersiveModeOptions: {}, // can extend immersed mode options
         immersiveModeMessage: 'Click to Zoom',
         prevThumbButton     : '&#9665;',
         nextThumbButton     : '&#9655;',
@@ -49,7 +51,7 @@ function wipImageZoomDirective($timeout)
 {
     return {
         restrict    : 'EA',
-        template    : '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\n     \'active\':vm.zoomActive, \n     \'immersive-mode\':vm.immersiveModeActive && !immersive,\n     \'box-style\':vm.options.style == \'box\' ,\n     \'inner-style\':vm.options.style == \'inner\'}">\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n    <div class="main-image-wrapper" ng-class="{\'loading\':vm.largeImageLoading}">\n        <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n        <div class="image-zoom-lens" wip-image-zoom-lens></div>\n        <img class="main-image" ng-src="{{vm.mainImage.medium}}" image-on-load="vm.initZoom()">\n        <div class="zoom-mask"\n             ng-class="vm.options.style == \'box\'? vm.options.boxPos : \'\'"\n             wip-image-zoom-mask>\n            <img wip-image-zoom-image class="zoom-image main-image-large" image-on-load="vm.largeImageLoaded()"\n                 ng-src="{{vm.mainImage.large}}">\n        </div>\n        <div ng-if="vm.immersiveModeActive && !immersive && vm.options.immersiveModeMessage !== \'\'"\n             class="immersive-mode-message" ng-bind="vm.options.immersiveModeMessage"></div>\n    </div>\n\n    <wip-image-zoom-thumbs\n            ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n</div>',
+        template    : '<div class="wip-image-zoom {{vm.options.style}}-style {{vm.options.thumbsPos}}-thumbs"\n     ng-class="{\n     \'active\':vm.zoomActive, \n     \'immersive-mode\':vm.immersiveModeActive && !immersive,\n     \'zoom-disabled\':!vm.options.zoomEnable,\n     \'box-style\':vm.options.style == \'box\' ,\n     \'inner-style\':vm.options.style == \'inner\'}">\n\n    <wip-image-zoom-thumbs ng-if="vm.options.thumbsPos === \'top\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n\n    <div ng-hide="!vm.options.zoomEnable && immersive" class="main-image-wrapper" ng-class="{\'loading\':vm.largeImageLoading}">\n        <div class="image-zoom-tracker" wip-image-zoom-tracker></div>\n        <div class="image-zoom-lens" wip-image-zoom-lens></div>\n        <img class="main-image" ng-src="{{vm.mainImage.medium}}" image-on-load="vm.initZoom()">\n        <div class="zoom-mask"\n             ng-class="vm.options.style == \'box\'? vm.options.boxPos : \'\'"\n             wip-image-zoom-mask>\n            <img wip-image-zoom-image class="zoom-image main-image-large" image-on-load="vm.largeImageLoaded()"\n                 ng-src="{{vm.mainImage.large}}">\n        </div>\n        <div ng-if="vm.immersiveModeActive && !immersive && vm.options.immersiveModeMessage !== \'\'"\n             class="immersive-mode-message" ng-bind="vm.options.immersiveModeMessage"></div>\n    </div>\n\n    <div class="immersive-no-zoom-image-wrapper" ng-show="!vm.options.zoomEnable && immersive">\n        <img class="main-image-large" ng-src="{{vm.mainImage.large}}">\n    </div>\n\n    <wip-image-zoom-thumbs\n            ng-if="vm.options.thumbsPos === \'bottom\' && vm.images.length > 1"></wip-image-zoom-thumbs>\n</div>',
         replace     : true,
         scope       : {
             selectedModel: '=?',
@@ -68,7 +70,7 @@ function wipImageZoomDirective($timeout)
         {
             var vm = this,
                 evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskW, maskH, zoomImgW, zoomImgH, lensW, lensH, lensPosX, lensPosY, zoomLevelRatio,
-                defaultOpts = wipImageZoomConfig.defaults,
+                defaultOpts = angular.copy(wipImageZoomConfig.defaults),
                 updateTimeout = true;
 
             vm.el;
@@ -146,6 +148,11 @@ function wipImageZoomDirective($timeout)
 
             function initZoom()
             {
+                if ( !vm.options.zoomEnable )
+                {
+                    return;
+                }
+
                 initSizes();
 
                 vm.zoomTracker.style.cursor = vm.options.cursor;
@@ -162,7 +169,7 @@ function wipImageZoomDirective($timeout)
                 // Reset Event Listeners
                 removeEventListeners();
 
-                vm.immersiveModeActive = vm.options.immersiveMode && vm.options.immersiveMode > $window.innerWidth;
+                vm.immersiveModeActive = vm.options.immersiveMode && vm.options.immersiveMode > $window.innerWidth || vm.options.immersiveMode === 'allways';
 
                 if ( vm.immersiveModeActive && !$scope.immersive )
                 {
@@ -218,10 +225,10 @@ function wipImageZoomDirective($timeout)
                 {
                     $document.find('html').addClass('wip-image-zoom-immersive-mode-enabled');
                     var body = $document.find('body').eq(0);
-                    vm.immersedImageOpt = angular.copy(vm.options);
-                    vm.immersedImageOpt.style = 'inner';
+                    vm.immersedImageOpt = angular.extend(angular.copy(vm.options), vm.options.immersiveModeOptions);
                     vm.immersedImageOpt.defaultIndex = $scope.selectedIndex;
-                    vm.immersedEl = $compile('<div class="immersive-wip-image-zoom">\n    <div class="disable-immersive-mode-button" ng-click="vm.disableImmersiveMode()">\n        &#10006;</div>\n    <img src="" wip-image-zoom="vm.immersedImageOpt" immersive="true" selected-index="selectedIndex">\n</div>\n')($scope);
+                    vm.immersedImageOpt.style = 'inner';
+                    vm.immersedEl = $compile('<div class="immersive-wip-image-zoom">\n    <div class="disable-immersive-mode-button" ng-click="vm.disableImmersiveMode()">&#10006;</div>\n    <img src="" wip-image-zoom="vm.immersedImageOpt" immersive="true" selected-index="selectedIndex">\n</div>\n')($scope);
                     body.append(vm.immersedEl);
                     update();
                 });

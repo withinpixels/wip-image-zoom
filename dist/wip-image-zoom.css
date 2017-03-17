@@ -23,7 +23,7 @@ html body .immersive-wip-image-zoom > .disable-immersive-mode-button {
   z-index: 20;
 }
 
-html body .immersive-wip-image-zoom > .wip-image-zoom {
+html body .immersive-wip-image-zoom > .wip-image-zoom:not(.zoom-disabled) {
   z-index: 20;
   position: absolute;
   top: 50%;
@@ -34,6 +34,19 @@ html body .immersive-wip-image-zoom > .wip-image-zoom {
   width: 75vh;
   max-width: 75vw;
   margin: auto;
+}
+
+html body .immersive-wip-image-zoom > .wip-image-zoom.zoom-disabled {
+  overflow: auto;
+  height: 100%;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+html body .immersive-wip-image-zoom .immersive-no-zoom-image-wrapper > img {
+  min-width: 100%;
+  width: 100%;
+  display: block;
 }
 
 .wip-image-zoom {

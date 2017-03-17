@@ -24,15 +24,33 @@ html {
                 z-index: 20;
             }
             > .wip-image-zoom {
-                z-index: 20;
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                left: 0;
-                right: 0;
-                width: 75vh;
-                max-width: 75vw;
-                margin: auto;
+
+                &:not(.zoom-disabled) {
+                    z-index: 20;
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    left: 0;
+                    right: 0;
+                    width: 75vh;
+                    max-width: 75vw;
+                    margin: auto;
+                }
+
+                &.zoom-disabled {
+                    overflow: auto;
+                    height: 100%;
+                    padding: 32px;
+                    box-sizing: border-box;
+                }
+            }
+
+            .immersive-no-zoom-image-wrapper {
+                > img {
+                    min-width: 100%;
+                    width: 100%;
+                    display: block;
+                }
             }
         }
     }
