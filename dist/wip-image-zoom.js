@@ -2,6 +2,7 @@
 imageOnLoadDirective.$inject = ["$log"];
 wipImageZoomDirective.$inject = ["$timeout"];angular
     .module('wipImageZoom', ['ngSanitize', 'ngTouch'])
+    .provider('wipImageZoomConfig', wipImageZoomConfig)
     .directive('imageOnLoad', imageOnLoadDirective)
     .directive('wipImageZoom', wipImageZoomDirective)
     .directive('wipImageZoomTracker', wipImageZoomTrackerDirective)
@@ -10,6 +11,40 @@ wipImageZoomDirective.$inject = ["$timeout"];angular
     .directive('wipImageZoomImage', wipImageZoomImageDirective)
     .directive('wipImageZoomThumbs', wipImageZoomThumbsDirective);
 
+
+function wipImageZoomConfig()
+{
+    this.defaults = {
+        defaultIndex        : 0, // Order of the default selected Image
+        images              : [],
+        style               : 'inner', // inner or box
+        boxPos              : 'right-top', // e.g., right-top, right-middle, right-bottom, top-center, top-left, top-right ...
+        boxW                : 400,
+        boxH                : 400,
+        method              : 'lens', // fallow 'lens' or 'pointer'
+        cursor              : 'crosshair', // 'none', 'default', 'crosshair', 'pointer', 'move'
+        lens                : true,
+        zoomLevel           : 3, // 0: not scales, uses the original large image size, use 1 and above to adjust.
+        immersiveMode       : 769, // false or 0 for disable, max width(px) for trigger
+        immersiveModeMessage: 'Click to Zoom',
+        prevThumbButton     : '&#9665;',
+        nextThumbButton     : '&#9655;',
+        thumbsPos           : 'bottom',
+        thumbCol            : 3,
+        thumbColPadding     : 4
+    };
+
+    this.setDefaults = function (defaults)
+    {
+        this.defaults = angular.extend(this.defaults, defaults);
+    };
+
+    this.$get = function ()
+    {
+        return this;
+    };
+
+}
 function wipImageZoomDirective($timeout)
 {
     return {
@@ -26,31 +61,14 @@ function wipImageZoomDirective($timeout)
         link        : function (scope, element, attrs, ctrl)
         {
             ctrl.el = element;
+            ctrl.attrs = attrs;
             ctrl.init();
         },
-        controller  : ["$scope", "$document", "$window", "$compile", function ($scope, $document, $window, $compile)
+        controller  : ["$scope", "$document", "$window", "$compile", "wipImageZoomConfig", function ($scope, $document, $window, $compile, wipImageZoomConfig)
         {
             var vm = this,
                 evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskW, maskH, zoomImgW, zoomImgH, lensW, lensH, lensPosX, lensPosY, zoomLevelRatio,
-                defaultOpts = {
-                    defaultIndex        : 0, // Order of the default selected Image
-                    images              : [],
-                    style               : 'inner', // inner or box
-                    boxPos              : 'right-top', // e.g., right-top, right-middle, right-bottom, top-center, top-left, top-right ...
-                    boxW                : 400,
-                    boxH                : 400,
-                    method              : 'lens', // fallow 'lens' or 'pointer'
-                    cursor              : 'crosshair', // 'none', 'default', 'crosshair', 'pointer', 'move'
-                    lens                : true,
-                    zoomLevel           : 3, // 0: not scales, uses the original large image size, use 1 and above to adjust.
-                    immersiveMode       : 769, // false or 0 for disable, max width(px) for trigger
-                    immersiveModeMessage: 'Click to Zoom',
-                    prevThumbButton     : '&#9665;',
-                    nextThumbButton     : '&#9655;',
-                    thumbsPos           : 'bottom',
-                    thumbCol            : 3,
-                    thumbColPadding     : 4
-                },
+                defaultOpts = wipImageZoomConfig.defaults,
                 updateTimeout = true;
 
             vm.el;
@@ -86,12 +104,31 @@ function wipImageZoomDirective($timeout)
             function init()
             {
                 vm.options = !$scope.wipImageZoom ? defaultOpts : angular.extend(defaultOpts, $scope.wipImageZoom);
-                vm.images = vm.options.images;
 
-                vm.mainImage = vm.images[vm.options.defaultIndex];
+                setImages();
 
                 $scope.selectedIndex = vm.options.defaultIndex;
                 $scope.selectedModel = vm.mainImage;
+            }
+
+            function setImages()
+            {
+                if ( vm.options.images.length > 0 )
+                {
+                    vm.images = vm.options.images;
+                }
+                else
+                {
+                    vm.images = [
+                        {
+                            thumb : vm.attrs.src,
+                            medium: vm.attrs.src,
+                            large : vm.attrs.src
+                        }
+                    ];
+                }
+
+                vm.mainImage = vm.images[vm.options.defaultIndex];
             }
 
             function update()

@@ -6,8 +6,10 @@
     .config(config);
 
   /** @ngInject */
-  function config() {
+  function config(wipImageZoomConfigProvider) {
+      wipImageZoomConfigProvider.setDefaults({
 
+      });
   }
 
 })();
