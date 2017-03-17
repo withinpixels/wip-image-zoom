@@ -111,13 +111,9 @@ function wipImageZoomDirective($timeout)
 
             function setImages()
             {
-                if ( vm.options.images.length > 0 )
+                if ( vm.options.images.length <= 0 )
                 {
-                    vm.images = vm.options.images;
-                }
-                else
-                {
-                    vm.images = [
+                    vm.options.images = [
                         {
                             thumb : vm.attrs.src,
                             medium: vm.attrs.src,
@@ -126,6 +122,7 @@ function wipImageZoomDirective($timeout)
                     ];
                 }
 
+                vm.images = vm.options.images;
                 vm.mainImage = vm.images[vm.options.defaultIndex];
             }
 
