@@ -1,14 +1,14 @@
 {
-  "name": "wip-image-zoom",
-  "version": "0.2.2-beta",
-  "dependencies": {
-    "angular": "~1.6.1",
-    "angular-sanitize": "~1.6.1",
-    "angular-touch": "~1.6.1"
-  },
-  "devDependencies": {},
-  "main": [
-    "dist/wip-image-zoom.js",
-    "dist/wip-image-zoom.css"
-  ]
+    "name": "wip-image-zoom",
+    "version": "1.0.0",
+    "dependencies": {
+        "angular": "~1.6.3",
+        "angular-sanitize": "~1.6.3",
+        "angular-touch": "~1.6.3"
+    },
+    "devDependencies": {},
+    "main": [
+        "dist/wip-image-zoom.js",
+        "dist/wip-image-zoom.css"
+    ]
 }
