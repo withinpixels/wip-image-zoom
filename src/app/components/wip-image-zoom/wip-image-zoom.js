@@ -81,7 +81,7 @@
                     evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskW, maskH, zoomImgW, zoomImgH, lensW,
                     lensH, lensPosX, lensPosY, zoomLevelRatio,
                     defaultOpts = angular.copy(wipImageZoomConfig.defaults),
-                    updateTimeout = true;
+                    updateTimeout = true, unWatchSelectedIndex, unWatchSelectedModel;
 
                 vm.el = {};
                 vm.zoomTracker = {};
@@ -121,6 +121,8 @@
 
                     $scope.selectedIndex = vm.options.defaultIndex;
                     $scope.selectedModel = vm.mainImage;
+
+                    registerWatchers();
                 }
 
                 function setImages()
@@ -463,12 +465,52 @@
                     });
                 }
 
+
+                function watchSelectedModel(newVal, oldVal)
+                {
+                    if ( angular.isDefined(newVal) && newVal !== oldVal )
+                    {
+                        vm.mainImage = newVal;
+                        updateThumbsPos();
+                    }
+                }
+
+
+                function watchSelectedIndex(newVal, oldVal)
+                {
+                    if ( angular.isDefined(newVal) && newVal !== oldVal )
+                    {
+                        vm.mainImage = vm.images[newVal];
+                        updateThumbsPos();
+                    }
+                }
+
                 function updateMainImage(image)
                 {
+
                     vm.largeImageLoading = true;
                     vm.mainImage = image;
-                    $scope.selectedModel = vm.mainImage;
+
+                    // Pause Watchers
+                    deRegisterWatchers();
+
+                    $scope.selectedModel = angular.copy(vm.mainImage);
                     $scope.selectedIndex = vm.images.indexOf(vm.mainImage);
+
+                    // Resume watchers
+                    registerWatchers();
+                }
+
+                function registerWatchers()
+                {
+                    unWatchSelectedIndex = $scope.$watch('selectedIndex', watchSelectedIndex, true);
+                    unWatchSelectedModel = $scope.$watch('selectedModel', watchSelectedModel, true);
+                }
+
+                function deRegisterWatchers()
+                {
+                    unWatchSelectedModel();
+                    unWatchSelectedIndex();
                 }
 
                 function largeImageLoaded()
@@ -476,24 +518,6 @@
                     vm.largeImageLoading = false;
                     initSizes();
                 }
-
-                $scope.$watch('selectedModel', function (newVal, oldVal)
-                {
-                    if ( angular.isDefined(newVal) && newVal !== oldVal )
-                    {
-                        vm.mainImage = newVal;
-                        updateThumbsPos();
-                    }
-                }, true);
-
-                $scope.$watch('selectedIndex', function (newVal, oldVal)
-                {
-                    if ( angular.isDefined(newVal) && newVal !== oldVal )
-                    {
-                        vm.mainImage = vm.images[newVal];
-                        updateThumbsPos();
-                    }
-                }, true);
 
                 angular.element(window).on('resize', function ()
                 {
@@ -587,7 +611,7 @@
         return {
             restrict: 'EA',
             require : '^wipImageZoom',
-            template: '<div class="thumbs-wrapper" ng-swipe-left="vm.nextThumb()" ng-swipe-right="vm.prevThumb()">\n    <div class="thumbs" >\n        <div class="thumb-wrapper" ng-repeat="image in vm.images">\n            <img ng-src="{{image.thumb}}" ng-click="vm.updateMainImage(image)"\n                 ng-class="{\'selected\': vm.mainImage.thumb === image.thumb}">\n        </div>\n    </div>\n</div>\n<div class="prev-button"\n     ng-if="vm.thumbsPos !== 0"\n     ng-click="vm.prevThumb()"\n     ng-bind-html="vm.options.prevThumbButton">Prev\n</div>\n<div class="next-button"\n     ng-if="vm.thumbsPos !== vm.maxPosX"\n     ng-click="vm.nextThumb()"\n     ng-bind-html="vm.options.nextThumbButton">Next\n</div>',
+            template: '<div class="thumbs-wrapper" ng-swipe-left="vm.nextThumb()" ng-swipe-right="vm.prevThumb()">\n    <div class="thumbs" >\n        <div class="thumb-wrapper" ng-repeat="image in vm.images">\n            <img ng-src="{{image.thumb}}" ng-click="vm.updateMainImage(image)"\n                 ng-class="{\'selected\': vm.mainImage.thumb === image.thumb}">\n        </div>\n    </div>\n</div>\n<div class="prev-button"\n     ng-if="vm.thumbsPos !== 0"\n     ng-click="vm.prevThumb()"\n     ng-bind-html="vm.options.prevThumbButton">Prev\n</div>\n<div class="next-button"\n     ng-if="vm.thumbsPos !== vm.maxPosX && vm.images.length > vm.options.thumbCol"\n     ng-click="vm.nextThumb()"\n     ng-bind-html="vm.options.nextThumbButton">Next\n</div>',
             link    : function (scope, element, attrs, ctrl)
             {
                 ctrl.thumbsWrapper = element[0].getElementsByClassName('thumbs-wrapper')[0];
