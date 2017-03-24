@@ -78,7 +78,8 @@
             controller  : function ($scope, $document, $window, $compile, wipImageZoomConfig)
             {
                 var vm = this,
-                    evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskW, maskH, zoomImgW, zoomImgH, lensW, lensH, lensPosX, lensPosY, zoomLevelRatio,
+                    evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskW, maskH, zoomImgW, zoomImgH, lensW,
+                    lensH, lensPosX, lensPosY, zoomLevelRatio,
                     defaultOpts = angular.copy(wipImageZoomConfig.defaults),
                     updateTimeout = true;
 
@@ -320,15 +321,35 @@
                         vm.zoomMaskEl.style.height = '100%';
                     }
 
+                    vm.zoomImageEl.style.width = '';
+                    vm.zoomImageEl.style.height = '';
+
                     if ( vm.options.zoomLevel > 1 )
                     {
                         vm.zoomImageEl.style.width = trackerW * vm.options.zoomLevel + 'px';
                         vm.zoomImageEl.style.height = trackerH * vm.options.zoomLevel + 'px';
                     }
+                    else
+                    {
+                        if ( vm.zoomImageEl.offsetWidth <= maskW || vm.zoomImageEl.offsetHeight <= maskH )
+                        {
+                            //landscape
+                            if ( vm.zoomImageEl.offsetWidth / vm.zoomImageEl.offsetHeight > 1 )
+                            {
+                                vm.zoomImageEl.style.height = maskH * 1.5 + 'px';
+                                vm.zoomImageEl.style.width = '';
+                            }
+                            // portrait
+                            else
+                            {
+                                vm.zoomImageEl.style.width = maskW * 1.5 + 'px';
+                                vm.zoomImageEl.style.height = '';
+                            }
+                        }
+                    }
 
                     zoomImgW = vm.zoomImageEl.offsetWidth;
                     zoomImgH = vm.zoomImageEl.offsetHeight;
-
                     setLensSize();
 
                 }
