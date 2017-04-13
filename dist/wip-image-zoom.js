@@ -254,6 +254,7 @@
                     {
                         return;
                     }
+
                     vm.thumbsWrapperWidth = vm.thumbsWrapper.clientWidth;
                     vm.thumbWidth = Math.round((vm.thumbsWrapperWidth + vm.options.thumbColPadding) / vm.options.thumbCol);
                     vm.thumbsWidth = vm.thumbWidth * vm.images.length;
@@ -426,10 +427,11 @@
 
                 function updateThumbsPos()
                 {
-                    if ( vm.images.length <= 1 )
+                    if ( vm.images.length <= 1 || vm.images.length < vm.options.thumbCol )
                     {
                         return;
                     }
+
                     var selectedIndex = getSelectedIndex();
                     var isInView = vm.thumbsPos + vm.options.thumbCol > selectedIndex && vm.thumbsPos < selectedIndex;
                     if ( isInView )
@@ -613,7 +615,7 @@
         return {
             restrict: 'EA',
             require : '^wipImageZoom',
-            template: '<div class="thumbs-wrapper" ng-swipe-left="vm.nextThumb()" ng-swipe-right="vm.prevThumb()">\n    <div class="thumbs" >\n        <div class="thumb-wrapper" ng-repeat="image in vm.images">\n            <img ng-src="{{image.thumb}}" ng-click="vm.updateMainImage(image)"\n                 ng-class="{\'selected\': vm.mainImage.thumb === image.thumb}">\n        </div>\n    </div>\n</div>\n<div class="prev-button"\n     ng-if="vm.thumbsPos !== 0"\n     ng-click="vm.prevThumb()"\n     ng-bind-html="vm.options.prevThumbButton">Prev\n</div>\n<div class="next-button"\n     ng-if="vm.thumbsPos !== vm.maxPosX && vm.images.length > vm.options.thumbCol"\n     ng-click="vm.nextThumb()"\n     ng-bind-html="vm.options.nextThumbButton">Next\n</div>',
+            template: '<div class="thumbs-wrapper" ng-swipe-left="vm.nextThumb()" ng-swipe-right="vm.prevThumb()">\n    <div class="thumbs" >\n        <div class="thumb-wrapper" ng-repeat="image in vm.images">\n            <img ng-src="{{image.thumb}}" ng-click="vm.updateMainImage(image)"\n                 ng-class="{\'selected\': vm.mainImage.thumb === image.thumb}">\n        </div>\n    </div>\n</div>\n<div class="prev-button"\n     ng-if="vm.thumbsPos !== 0 && vm.images.length > vm.options.thumbCol"\n     ng-click="vm.prevThumb()"\n     ng-bind-html="vm.options.prevThumbButton">Prev\n</div>\n<div class="next-button"\n     ng-if="vm.thumbsPos !== vm.maxPosX && vm.images.length > vm.options.thumbCol"\n     ng-click="vm.nextThumb()"\n     ng-bind-html="vm.options.nextThumbButton">Next\n</div>',
             link    : function (scope, element, attrs, ctrl)
             {
                 ctrl.thumbsWrapper = element[0].getElementsByClassName('thumbs-wrapper')[0];

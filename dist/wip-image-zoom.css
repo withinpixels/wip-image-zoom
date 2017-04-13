@@ -97,6 +97,7 @@ html body .immersive-wip-image-zoom .immersive-no-zoom-image-wrapper > img {
 }
 
 .wip-image-zoom .main-image-wrapper .zoom-mask {
+  background: #ffffff;
   z-index: 20;
   position: absolute;
   overflow: hidden;
