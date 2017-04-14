@@ -302,11 +302,9 @@
 
                 function initSizes()
                 {
-                    var tracker = vm.zoomTracker.getBoundingClientRect();
-                    trackerW = tracker.width;
-                    trackerH = tracker.height;
-                    trackerL = tracker.left + $window.scrollX;
-                    trackerT = tracker.top + $window.scrollY;
+                    var trackerPos = vm.zoomTracker.getBoundingClientRect();
+                    trackerW = trackerPos.width;
+                    trackerH = trackerPos.height;
                     // Box Style
                     if ( vm.options.style === 'box' && !$scope.immersive )
                     {
@@ -411,6 +409,24 @@
 
                 function setLensPosition()
                 {
+                    function getWindow(elem)
+                    {
+                        return isWindow(elem) ? elem : elem.nodeType === 9 && elem.defaultView;
+                    }
+
+                    function isWindow(obj)
+                    {
+                        return obj != null && obj === obj.window;
+                    }
+
+                    var doc = vm.zoomTracker && vm.zoomTracker.ownerDocument;
+                    var win = getWindow(doc);
+                    var docElem = doc.documentElement;
+
+                    var trackerPos = vm.zoomTracker.getBoundingClientRect();
+                    var trackerT = trackerPos.top + win.pageYOffset - docElem.clientTop;
+                    var trackerL = trackerPos.left + win.pageXOffset - docElem.clientLeft;
+
                     lensPosX = (evPosX - trackerL) - lensW * 0.5;
                     lensPosY = (evPosY - trackerT) - lensH * 0.5;
 
