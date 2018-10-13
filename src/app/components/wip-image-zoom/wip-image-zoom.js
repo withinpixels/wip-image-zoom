@@ -81,7 +81,7 @@
                     evPosX, evPosY, trackerW, trackerH, trackerL, trackerT, maskW, maskH, zoomImgW, zoomImgH, lensW,
                     lensH, lensPosX, lensPosY, zoomLevelRatio,
                     defaultOpts = angular.copy(wipImageZoomConfig.defaults),
-                    updateTimeout = true, unWatchSelectedIndex, unWatchSelectedModel;
+                    updateTimeout = false, unWatchSelectedIndex, unWatchSelectedModel;
 
                 vm.el = {};
                 vm.zoomTracker = {};
